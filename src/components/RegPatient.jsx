@@ -1,0 +1,186 @@
+import React from 'react';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+  MenuItem,
+  Link,
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import EditIcon from '@mui/icons-material/Edit';
+import { RiCloseCircleFill } from "react-icons/ri";
+import { FaCalendarPlus } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { getRegisteredPatients } from '../service/patientService'; // adjust path as needed
+import { formatDate } from '../utils/formatDate';
+
+// DatePicker and localization
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+export default function RegisteredPatients() {
+  const [data, setData] = React.useState([]);
+  const [filteredData, setFilteredData] = React.useState([]);
+  const [search, setSearch] = React.useState('');
+  const [dateFilter, setDateFilter] = React.useState(null); // use Dayjs object
+  const [doctorFilter, setDoctorFilter] = React.useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRegisteredPatients = async () => {
+      try {
+        const data = await getRegisteredPatients();
+        setData(data.data);
+      } catch (err) {
+        console.log('error', err);
+      }
+    };
+    fetchRegisteredPatients();
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...data];
+
+    if (search) {
+      const lower = search.toLowerCase();
+      filtered = filtered.filter(
+        item =>
+          item.mobile?.includes(search) ||
+          item.firstName?.toLowerCase().includes(lower) ||
+          item.lastName?.toLowerCase().includes(lower)
+      );
+    }
+
+    if (doctorFilter) {
+      filtered = filtered.filter(item => item.doctor === doctorFilter);
+    }
+
+   if (dateFilter) {
+  const filterDateStr = dayjs(dateFilter).format("YYYY-MM-DD");
+  filtered = filtered.filter(item =>
+    dayjs(item.date).utc().format("YYYY-MM-DD") === filterDateStr
+  );
+}
+
+
+    setFilteredData(filtered);
+  }, [search, doctorFilter, dateFilter, data]);
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box p={3} sx={{ bgcolor: "#fff", minHeight: '100vh' }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Registered Patients
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Patients List
+        </Typography>
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <TextField
+            size="small"
+            placeholder="Search by name or mobile number"
+            variant="outlined"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <DatePicker
+            label="Date"
+            value={dateFilter}
+            onChange={newValue => setDateFilter(newValue)}
+            slotProps={{
+              textField: {
+                size: 'small',
+                sx: { minWidth: 140 },
+              },
+            }}
+            format="YYYY-MM-DD"
+            clearable
+          />
+          <TextField
+            select
+            size="small"
+            label="Doctor"
+            value={doctorFilter}
+            onChange={e => setDoctorFilter(e.target.value)}
+            sx={{ minWidth: 120 }}
+          >
+            <MenuItem value=''>All</MenuItem>
+            <MenuItem value='Dr. Meera'>Dr. Meera</MenuItem>
+            <MenuItem value='Dr. Ram'>Dr. Ram</MenuItem>
+            <MenuItem value='Dr. Vikram'>Dr. Vikram</MenuItem>
+          </TextField>
+        </Box>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Reg ID</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Mobile</TableCell>
+                <TableCell>Age</TableCell>
+                <TableCell>Visited Doctor</TableCell>
+                <TableCell>Visited Date</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData && filteredData.map((row, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <Link href="#" color="primary" fontWeight={600} >
+                      {row.reg_patientId}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{row.firstName} {row.lastName}</TableCell>
+                  <TableCell>{row.mobile}</TableCell>
+                  <TableCell>{row.age}</TableCell>
+                  <TableCell>{row.doctor}</TableCell>
+                  <TableCell>{formatDate(row.date)}</TableCell>
+                  <TableCell>
+                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><EditIcon /></IconButton>
+                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><FaCalendarPlus size={20} /></IconButton>
+                    <IconButton color="primary"><RiCloseCircleFill /></IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Box display="flex" justifyContent="space-between" p={2}>
+            <Typography variant="body2">
+              Showing 1 to 10 of 5565 patients
+            </Typography>
+            <Box>
+              <Button variant="outlined" size="small" sx={{ mr: 1 }}>
+                Prev
+              </Button>
+              <Button variant="outlined" size="small">
+                Next
+              </Button>
+            </Box>
+          </Box>
+        </TableContainer>
+      </Box>
+    </LocalizationProvider>
+  );
+}

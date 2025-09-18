@@ -1,0 +1,40 @@
+// dummyQuote.js (optional file)
+const dummyQuote = {
+    SourceType: "TravelPackage",
+    UniqueId: "TravelPackage_17",
+    BookingId: 17,
+    PackageType: "Domestic",
+    Countries: "India",
+    City: "Delhi",
+    CheckInDate: "2025-05-02T00:00:00.000Z",
+    CheckOutDate: "2025-05-06T00:00:00.000Z",
+    HotelName: "jghj",
+    HotelRating: 3,
+    Adults: 1,
+    Children: 3,
+    Infants: 3,
+    ChildrenAges: "7,8,8",
+    Budget: "543534-76867",
+    MealPlan: "EP",
+    BookingStatus: "InProgress",
+    OrganizationId: 101,
+    UserCode: "USR004",
+    Remarks: "76867",
+    CreatedOn: "2025-05-03T00:00:00.000Z",
+    UpdatedOn: "2025-05-03T16:11:38.120Z",
+    bookingname: "travelpackage",
+    isActive: true,
+    VisaType: null,
+    MobileNumber: null,
+    DepartureDate: null,
+    ReturnDate: null,
+    TripType: null,
+    FareType: null,
+    Segment1Date: null,
+    Segment2Date: null,
+    Segment3Date: null,
+    UserName: "pugazh"
+  };
+  
+  export default dummyQuote;
+  
