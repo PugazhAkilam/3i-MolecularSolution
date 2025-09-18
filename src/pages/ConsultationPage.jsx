@@ -13,7 +13,8 @@ const theme = createTheme({
     },
     secondary: {
       main: '#dc004e',
-    },
+    },   
+    
   },
   components: {
     MuiTab: {
