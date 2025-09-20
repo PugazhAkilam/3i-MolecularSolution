@@ -154,7 +154,14 @@ export default function VisitorHistory() {
             {filteredRows.map((row,i) => (
                <TableRow key={i}>
                                <TableCell>
-                                 <Link  color="primary" fontWeight={600} onClick={() => navigate(`/admin/VisitPatientId`)}>
+                                 <Link  color="primary" fontWeight={600} onClick={() => navigate(`/admin/VisitPatientId`, {
+                                  state: {
+              regId: row.reg_patientId,
+              name: row.firstName+" "+row.lastName,
+              mobile: row.mobile,
+              age: row.age,
+             }
+                                 })}>
                                    {row.reg_patientId}
                                  </Link>
                                </TableCell>

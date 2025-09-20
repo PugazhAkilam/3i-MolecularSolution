@@ -44,6 +44,7 @@ const rowsPerPage = 10;
 export default function PatientsList() {
   const [search, setSearch] = useState("");
   const [ userData, setUserData ] = useState([]);
+  const [ appointments, setAppointments] = useState([]);
 
   // Fetch data from API filtered by selectedDate
  
@@ -74,12 +75,30 @@ const navigate=useNavigate();
     }
   }, [selectedDate]);
 
+
+    const deleteAppointment = async (id) => {      
+      try {
+        const res = await fetch(`http://localhost:8000/api/deleteAppointment${id}`, 
+          {
+            method: 'DELETE',
+          }
+        );
+        const data = await res.json();
+        console.log("del-data",data);
+        setUserData(data);
+      
+      } catch(err) {
+        console.log("error",err);
+        console.log("failed to delete");        
+      }
+    };
+
   // Handler for calendar button
   const handleCalendarClick = () => {
     setShowDatePicker(true);
     setSelectedDate(new Date()); // focus today
   };
-const handleDelete = () => {
+const handleDelete = (id) => {
   Swal.fire({
     title: 'Are you sure?',
     text: "Do you want to delete this appointment?",
@@ -91,6 +110,7 @@ const handleDelete = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       // Perform the delete action here (e.g., API call or state update)
+         deleteAppointment(id);
       Swal.fire('Deleted!', 'The appointment has been deleted.', 'success');
     }
   });
@@ -320,7 +340,7 @@ const handleDelete = () => {
   
 
   <Tooltip title="Delete">
-  <IconButton color="primary" onClick={handleDelete}>
+  <IconButton color="primary" onClick={() => handleDelete(row.patientId)}>
     <RiCloseCircleFill />
   </IconButton>
 </Tooltip>

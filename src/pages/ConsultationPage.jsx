@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Typography, Tabs, Tab, AppBar,Divider  } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import PatientDetails from '../components/Consultantion/PatientDetails';
-import ConsultationTab from '../components/Consultantion/ConsultationTab';
-import MedicalHistoryTab from '../components/Consultantion/MedicalHistoryTab';
-import PreviousVisitTab from '../components/Consultantion/PreviousVisitTab';
+import PatientDetails from '../components/consultation/PatientDetails';
+import ConsultationTab from '../components/consultation/ConsultationTab';
+import MedicalHistoryTab from '../components/consultation/MedicalHistoryTab';
+import PreviousVisitTab from '../components/consultation/PreviousVisitTab';
 
 const theme = createTheme({
   palette: {

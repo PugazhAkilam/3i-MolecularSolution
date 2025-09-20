@@ -148,7 +148,7 @@ export default function RegisteredPatients() {
               {filteredData && filteredData.map((row, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Link href="#" color="primary" fontWeight={600} >
+                    <Link href="visitorhistory" color="primary" fontWeight={600} >
                       {row.reg_patientId}
                     </Link>
                   </TableCell>
@@ -158,8 +158,15 @@ export default function RegisteredPatients() {
                   <TableCell>{row.doctor}</TableCell>
                   <TableCell>{formatDate(row.date)}</TableCell>
                   <TableCell>
-                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><EditIcon /></IconButton>
-                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><FaCalendarPlus size={20} /></IconButton>
+                    {/* <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><EditIcon /></IconButton> */}
+                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1',{
+                       state: {
+      regId: row.reg_patientId,
+      name: row.firstName+" "+row.lastName,
+      mobile: row.mobile,
+      age: row.age,
+    }
+                    })}><FaCalendarPlus size={20} /></IconButton>
                     <IconButton color="primary"><RiCloseCircleFill /></IconButton>
                   </TableCell>
                 </TableRow>

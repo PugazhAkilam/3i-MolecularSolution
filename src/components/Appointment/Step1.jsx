@@ -35,9 +35,12 @@ export default function AppointmentStep1() {
     age: ''
   });
   const navigate = useNavigate();
- const location = useLocation();
+  const location = useLocation();
   const patientData = location.state || {};
   console.log("pat",patientData);
+
+
+  
   
   // Load the last registered patient from localStorage
   useEffect(() => {
