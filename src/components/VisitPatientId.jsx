@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -19,9 +19,59 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { RiCloseCircleFill } from "react-icons/ri";
+import { useLocation } from 'react-router-dom';
+import VisitHistoryTable from './visitHis/VisitHistoryTable';
 
 
 export default function VisitorHistoryId() {
+  const [data, setData] = useState([]);
+  const [patient, setPatient] = useState([]);
+  const [appointment, setAppointment] = useState({});
+  const location = useLocation();
+  const patientData = location.state || {};
+  console.log("patientData", patientData);
+          console.log("patId", patientData.regId);
+  console.log("patient",patient);
+  
+  // console.log("visitor appointment",data);
+  
+
+  useEffect(() => {
+  const fetchAllDetails = async () => {
+    try {
+      console.log("patId", patientData.regId);
+
+      // // Fetch selected patient
+      // const selectedPatientRes = await fetch(`http://localhost:8000/api/selectedPatient/${patientData.regId}`);
+      // const selectedPatientData = await selectedPatientRes.json();
+      // console.log("res-data selectedPatient", selectedPatientData.data);
+      // setData(selectedPatientData.data);
+
+      // Fetch patient details
+      const patientDetailsRes = await fetch(`http://localhost:8000/api/patient/patientDetails/${patientData.regId}`);
+      const patientDetailsData = await patientDetailsRes.json();
+      console.log("res-data patientDetails", patientDetailsData.data);
+      setPatient(patientDetailsData.data);
+
+      // Fetch appointment details
+      const appointmentRes = await fetch(`http://localhost:8000/api/appointment/appointmentDetails/${patientData.regId}`);
+      const appointmentData = await appointmentRes.json();
+      console.log("res-data appointmentDetails", appointmentData.data);
+      setAppointment(appointmentData.data);
+
+    } catch (err) {
+      console.log("error", err);
+      console.log("failed to fetch details for selected patientId.");
+    }
+  };
+
+  if (patientData.regId) {
+    fetchAllDetails();
+  }
+}, [patientData.regId]);
+  
+console.log("appointment",appointment);
+
   return (
     <Box sx={{ p: 1, bgcolor: '#ffffff', minHeight: '100vh' }}>
       
@@ -37,7 +87,7 @@ export default function VisitorHistoryId() {
           Patient History
         </Typography>
         <Typography variant="body2" mt={0.5} color="text.secondary">
-          PID: P5123 | Rakshita
+          {patientData.regId} | {patientData.name}
         </Typography>
 
         <Divider sx={{ my: 3 }} />
@@ -50,13 +100,17 @@ export default function VisitorHistoryId() {
             </Typography>
             <Stack direction="row" spacing={3}>
               <Stack spacing={0.5}>
-                <Typography variant="body2">
-                  Name:&nbsp;<b>Rakshita</b>
+                {patient && patient.map((row) => (
+                  <>
+                  <Typography variant="body2">
+                  Name:&nbsp;<b>{row.firstName} {row.lastName}</b>
                 </Typography>
-                <Typography variant="body2">Age: 35</Typography>
-                <Typography variant="body2">Sex: Female</Typography>
-                <Typography variant="body2">Weight: 65 kg</Typography>
-                <Typography variant="body2">Height: 160 cm</Typography>
+                <Typography variant="body2">Age: {row.age}</Typography>
+                <Typography variant="body2">Sex: {row.sex}</Typography>
+                <Typography variant="body2">Weight: {row.weight} kg</Typography>
+                <Typography variant="body2">Height: {row.height} cm</Typography>
+                </>
+                ))}
               </Stack>
             </Stack>
           </Grid>
@@ -66,37 +120,50 @@ export default function VisitorHistoryId() {
             <Typography variant="body2" fontWeight={600}>
               Contact Details
             </Typography>
-            <Stack spacing={0.5}>
-              <Typography variant="body2">Mobile: 9994403456</Typography>
+            {patient && patient.map((row) => (
+              <>
+              <Stack spacing={0.5}>
+              <Typography variant="body2">Mobile: {row.mobile}</Typography>
               <Typography variant="body2" color="text.secondary">
-                Email: <b>Not Available</b>
+                Email: <b>{row.email}</b>
               </Typography>
               <Typography variant="body2">
-                Address: #33, gandhi Nagar, 2nd cross street
+                Address: {row.addressLine1}
               </Typography>
             </Stack>
+              </>
+            ))}
+            
           </Grid>
         </Grid>
 
         {/* Vital Info */}
         <Typography variant="body2" mb={2}>
-          Patient Vital Info <span style={{ color: '#848484' }}>(updated on 10-Feb-2025)</span>
+          Patient Vital Info <span style={{ color: '#848484' }}>(updated on{appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}) : null})</span>
         </Typography>
         <Grid container spacing={2} alignItems="center" sx={{ mb: 1 }}>
+
+           
+          
           <Grid item xs={6} sm={3}>
-            <Stack alignItems="center">
+           
+              <Stack alignItems="center">
               <Typography fontWeight={600} variant="body1" color="primary">
-                120/80
+                {appointment.bloodPressure}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Blood Pressure
               </Typography>
             </Stack>
-          </Grid>
+            </Grid>
           <Grid item xs={6} sm={3}>
             <Stack alignItems="center">
               <Typography fontWeight={600} variant="body1" color="primary">
-                72
+                {appointment.pulse}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Pulse (BPM)
@@ -106,7 +173,7 @@ export default function VisitorHistoryId() {
           <Grid item xs={6} sm={3}>
             <Stack alignItems="center">
               <Typography fontWeight={600} variant="body1" color="primary">
-                18
+                {appointment.respiratoryRate}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Respiratory rate (Per min)
@@ -116,25 +183,29 @@ export default function VisitorHistoryId() {
           <Grid item xs={6} sm={3}>
             <Stack alignItems="center">
               <Typography fontWeight={600} variant="body1" color="primary">
-                Moderate
+                {appointment.stressLevel}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Stress Level
               </Typography>
             </Stack>
           </Grid>
+           
+          
         </Grid>
 
            {/* Visit History Table */}
       <Typography variant="h6" fontWeight={500} mb={2}>
         Visit History
       </Typography>
-      <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
+
+      <VisitHistoryTable regId={patientData.regId} />
+      {/* <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Visited Date</TableCell>
-              <TableCell>Photo</TableCell>
+              <TableCell>respiratoryRate</TableCell>
               <TableCell>BP Reading</TableCell>
               <TableCell>Pulse</TableCell>
               <TableCell>Notes</TableCell>
@@ -142,14 +213,20 @@ export default function VisitorHistoryId() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Row 1 */}
-            <TableRow>
-              <TableCell>10-Feb-2024</TableCell>
+        
+            {data && data.map((row) => (
+              
+                 <TableRow>
+              <TableCell>{row.date ? new Date(row.date).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}) : null}</TableCell>
               <TableCell>
-                <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }} />
+             {row.respiratoryRate}
               </TableCell>
-              <TableCell>##### #####</TableCell>
-              <TableCell>###</TableCell>
+              <TableCell>{row.bloodPressure}</TableCell>
+              <TableCell>{row.pulse}</TableCell>
               <TableCell>Regular Checkup</TableCell>
               <TableCell>
                 <Tooltip title="Delete">
@@ -163,30 +240,12 @@ export default function VisitorHistoryId() {
                                        </Tooltip>
               </TableCell>
             </TableRow>
-            {/* Row 2 */}
-            <TableRow>
-              <TableCell>15-Jan-2024</TableCell>
-              <TableCell>
-                <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }} />
-              </TableCell>
-              <TableCell>##### #####</TableCell>
-              <TableCell>###</TableCell>
-              <TableCell>Fever</TableCell>
-              <TableCell>
-                <Tooltip title="Delete">
-                                     
-                                         <IconButton
-                                       color="primary"
-                                       >
-                                     <RiCloseCircleFill />
-                                      
-                                         </IconButton>
-                                       </Tooltip>
-              </TableCell>
-            </TableRow>
+
+            ))}
+                   
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
 
       {/* Action Buttons */}
                <Box

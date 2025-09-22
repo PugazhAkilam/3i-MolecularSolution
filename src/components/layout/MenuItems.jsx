@@ -31,7 +31,7 @@ export const getMenuItems = (user,loading) => {
     { text: 'New Patient', icon: <MdPersonAdd size={28}/>, path: '/admin/newpatient' },
      { text: 'Registered Patient', icon: <MdPeopleAlt size={28}/>, path: '/admin/regpatient' },
      { text: 'Visitor History', icon: <PiClockCounterClockwiseFill size={28}/>, path: '/admin/visitorhistory' },
-    { text: 'consultation', icon: <BiSolidBarChartSquare size={32}/>, path: '/admin/consultation' },
+    // { text: 'consultation', icon: <BiSolidBarChartSquare size={32}/>, path: '/admin/consultation' },
       ];
     
 

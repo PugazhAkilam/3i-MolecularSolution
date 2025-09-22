@@ -54,7 +54,7 @@ export default function AppointmentStep1() {
         name: patientData.name,
         mobile: patientData.mobile,
         age: patientData.age,
-    
+        patientId: patientData.data.appointmentId || null
       });
     }
   }, [patientData]);
@@ -235,7 +235,7 @@ export default function AppointmentStep1() {
   variant="contained"
   onClick={() =>
     navigate("/admin/appointment-step2", {
-      state: { date, selectedTime, selectedDoctor, patient, edit:'new' },
+      state: { date, selectedTime, selectedDoctor, patient, edit:'edit' },
     })
   }
 >

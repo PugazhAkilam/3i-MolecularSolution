@@ -44,7 +44,6 @@ useEffect(() => {
         time: selectedTime,
         doctor: selectedDoctor,
         patient,
-        
       });
     }
   }, [date, selectedTime, selectedDoctor, patient]);
@@ -53,7 +52,7 @@ console.log(selectedDoctor, date, selectedTime);
 
  const handleContinue = () => {
   console.log("Continue clicked in Capture Now mode");
-  navigate("/admin/appointment-step3", { state: { appointment, scanResults ,action:"new"} });
+  navigate("/admin/appointment-step3", { state: { appointment, scanResults } });
 };
 
   const handleChange = (event, newMode) => {
@@ -63,8 +62,7 @@ console.log(selectedDoctor, date, selectedTime);
   };
   // Start webcam stream when cameraOn becomes true
   useEffect(() => {
-  if (cameraOn) {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (cameraOn) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
         .then((stream) => {
@@ -79,23 +77,19 @@ console.log(selectedDoctor, date, selectedTime);
           setCameraOn(false);
         });
     } else {
-      alert("Camera API not supported or unavailable.");
-      setCameraOn(false);
+      // Stop webcam when cameraOff
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     }
-  } else {
-    // Stop webcam when cameraOff
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-  }
-  return () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-  };
-}, [cameraOn]);
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [cameraOn]);
 
   const handleScan = () => {
     setScanResults(null);
@@ -185,33 +179,34 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
       aria-label="capture mode"
       sx={{ mb: 4 }}
     >
-      <ToggleButton 
-  value="now"
-  aria-label="capture now"
-  sx={{
-    bgcolor: captureMode === "now" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "now" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "now" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
->
-  Capture Now
-</ToggleButton>
-
+      <ToggleButton
+        value="now"
+        aria-label="capture now"
+        sx={{
+          bgcolor: captureMode === "now" ? "blue.100" : "transparent",
+          color: captureMode === "now" ? "blue.700" : "inherit",
+          textTransform: "none",
+          borderColor: captureMode === "now" ? "blue.300" : "rgba(0, 0, 0, 0.12)",
+          "&:hover": {
+            bgcolor: "blue.100",
+          },
+        }}
+      >
+        Capture Now
+      </ToggleButton>
 
       <ToggleButton
         value="later"
         aria-label="capture later"
-sx={{
-    bgcolor: captureMode === "later" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "later" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "later" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
+        sx={{
+          bgcolor: captureMode === "later" ? "grey.100" : "transparent",
+          color: captureMode === "later" ? "grey.700" : "inherit",
+          textTransform: "none",
+          borderColor: captureMode === "later" ? "grey.300" : "rgba(0, 0, 0, 0.12)",
+          "&:hover": {
+            bgcolor: "grey.200",
+          },
+        }}
       >
         Capture Later
       </ToggleButton>
@@ -501,7 +496,7 @@ sx={{
             alignItems: "center",
           }}
         >
-          <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }} onClick={() => navigate(-1)}>
+          <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }}>
             Back
           </Button>
           <Box sx={{ display: "flex", gap: 2 }}>

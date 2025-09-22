@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Box, Typography, Tabs, Tab, AppBar,Divider  } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import PatientDetails from '../components/Consultantion/PatientDetails';
-import ConsultationTab from '../components/Consultantion/ConsultationTab';
-import MedicalHistoryTab from '../components/Consultantion/MedicalHistoryTab';
-import PreviousVisitTab from '../components/Consultantion/PreviousVisitTab';
+import PatientDetails from '../components/consultation/PatientDetails';
+import ConsultationTab from '../components/consultation/ConsultationTab';
+import MedicalHistoryTab from '../components/consultation/MedicalHistoryTab';
+import PreviousVisitTab from '../components/consultation/PreviousVisitTab';
+import { useLocation } from 'react-router-dom';
+
 
 const theme = createTheme({
   palette: {
@@ -59,7 +61,10 @@ const Consultant = () => {
     setValue(newValue);
   };
 
-  const patientData = {
+ const location = useLocation();
+  const patientData = location.state.patient || {};
+  console.log("pat",patientData);
+  const patientDataw = {
     name: 'Rakshita',
     age: 35,
     sex: 'Female',
@@ -94,13 +99,13 @@ const Consultant = () => {
 
           <Box sx={{ display: 'flex', flexGrow: 1 }}>
             <TabPanel value={value} index={0}>
-              <ConsultationTab />
+              <ConsultationTab patientData={patientData} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <MedicalHistoryTab />
+              <MedicalHistoryTab patientData={patientData}  />
             </TabPanel>
             <TabPanel value={value} index={2}>
-              <PreviousVisitTab />
+              <PreviousVisitTab patientData={patientData} />
             </TabPanel>
 
             <PatientDetails patientData={patientData} appointmentData={appointmentData} />
