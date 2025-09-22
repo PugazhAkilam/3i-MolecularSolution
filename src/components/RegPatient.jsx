@@ -22,8 +22,9 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { FaCalendarPlus } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { getRegisteredPatients } from '../service/patientService'; // adjust path as needed
+import { getRegisteredPatients ,deletePatient } from '../service/patientService'; // adjust path as needed
 import { formatDate } from '../utils/formatDate';
+import { showDeleteConfirmation } from '../utils/sweetAlert';
 
 // DatePicker and localization
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -79,6 +80,29 @@ export default function RegisteredPatients() {
 
     setFilteredData(filtered);
   }, [search, doctorFilter, dateFilter, data]);
+
+   const handleDelete = async (patientId) => {
+        const result = await showDeleteConfirmation();
+
+        if (result.isConfirmed) {
+            try {
+                await deletePatient(patientId);
+                await fetchRegisteredPatients(); // Re-fetch the data to update the table
+                Swal.fire(
+                    'Deleted!',
+                    'The patient has been soft-deleted.',
+                    'success'
+                );
+            } catch (err) {
+                console.error("Error deleting patient:", err);
+                Swal.fire(
+                    'Failed!',
+                    'Could not delete the patient.',
+                    'error'
+                );
+            }
+        }
+    };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -148,9 +172,16 @@ export default function RegisteredPatients() {
               {filteredData && filteredData.map((row, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    <Link href="#" color="primary" fontWeight={600} >
-                      {row.reg_patientId}
-                    </Link>
+                    <Link  color="primary" fontWeight={600} sx={{cursor: 'pointer'}} onClick={() => navigate(`/admin/VisitPatientId`, {
+                                                     state: {
+                                 regId: row.reg_patientId,
+                                 name: row.firstName+" "+row.lastName,
+                                 mobile: row.mobile,
+                                 age: row.age,
+                                }
+                                                    })}>
+                                                      {row.reg_patientId}
+                                                    </Link>
                   </TableCell>
                   <TableCell>{row.firstName} {row.lastName}</TableCell>
                   <TableCell>{row.mobile}</TableCell>
@@ -158,9 +189,22 @@ export default function RegisteredPatients() {
                   <TableCell>{row.doctor}</TableCell>
                   <TableCell>{formatDate(row.date)}</TableCell>
                   <TableCell>
-                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><EditIcon /></IconButton>
-                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1')}><FaCalendarPlus size={20} /></IconButton>
-                    <IconButton color="primary"><RiCloseCircleFill /></IconButton>
+                    <IconButton color="primary" onClick={() => navigate('/admin/newpatient',{state:{
+                      regId: row.reg_patientId,
+                      action:"edit"
+                    }})}><EditIcon /></IconButton>
+                    <IconButton color="primary" onClick={() => navigate('/admin/appointment-step1',{
+                       state: {
+      regId: row.reg_patientId,
+      name: row.firstName+" "+row.lastName,
+      mobile: row.mobile,
+      age: row.age,
+    }
+                    })}><FaCalendarPlus size={20} />
+                    </IconButton>
+                     <IconButton color="primary" onClick={() => handleDelete(row.reg_patientId)}>
+                                            <RiCloseCircleFill />
+                                        </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

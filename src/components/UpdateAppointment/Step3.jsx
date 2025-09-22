@@ -28,8 +28,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { RiCloseCircleFill } from "react-icons/ri";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import { formatTo12Hour } from "../../utils/formatDate";
 import VisitHistoryTable from "../visitHis/VisitHistoryTable";
-
 
 const visitHistory = [
   {
@@ -53,8 +53,7 @@ export default function AppointmentReviewStep3() {
   
   
   const location = useLocation();
-  const { appointment, scanResults } = location.state || {};
-  console.log("loc",location.state);
+  const { appointment, scanResults,action } = location.state || {};
   
 
   console.log("s3",appointment);
@@ -63,85 +62,65 @@ export default function AppointmentReviewStep3() {
   
   const [open, setOpen] = React.useState(false);
 
-  // const handleSave = async () => {
-
-  //   const newAppointment = {...appointment, ...scanResults };
-  //   console.log("nA",newAppointment);
-    
-  //   try {
-  //     const res = await fetch('http://localhost:8000/api/appointment', {
-  //       method: "POST",
-  //       headers: {
-  //       'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(newAppointment)
-  //     });
-  //     const data = res.json();
-  //     console.log("res-data", data);
-      
-  //   } catch(err) {
-  //     console.log("error",err);      
-  //   }
-  //   setOpen(true);
-  // };
-
   const handleSave = async () => {
-    // Combine existing appointment data with new scan results
-    const newAppointment = { ...appointment, ...scanResults };
-    console.log("newAppointment:", newAppointment);
 
-    let apiUrl;
-    let method;
-
-    // Determine API endpoint and method based on whether an appointment ID exists
-    if (newAppointment.patient && newAppointment.patient.patientId) {
-        // If an appointmentId exists, it's an update
-        apiUrl = `http://localhost:8000/api/editAppointment/${newAppointment.patient.patientId}`;
-        method = "PUT";
-    } else if (newAppointment.patient.regId) {
-        // If it's a new registration, it's a create operation
-        apiUrl = 'http://localhost:8000/api/appointment';
-        method = "POST";
-    } else {
-        // Handle case where neither ID is available
-        console.error("No valid appointment ID or registration ID found.");
-        return; // Exit the function to prevent an API call
-    }
-
+    const newAppointment = {...appointment, ...scanResults };
+    console.log("nA",newAppointment);
+    
     try {
-        const res = await fetch(apiUrl, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newAppointment)
-        });
-
-        // Always await the response data to avoid a common promise-related error
-        const data = await res.json();
-        console.log("res-data", data);
-
-        if (res.ok) {
-          console.log("Appointment saved successfully!");
-          
-           // alert("Appointment saved successfully!");
-        } else {
-            alert(`Error: ${data.message || 'Failed to save appointment.'}`);
-        }
-
-    } catch (err) {
-        console.log("error", err);
-        alert("An error occurred. Please try again.");
+      const res = await fetch(`http://localhost:8000/api/editAppointment/${appointment.patient.appointmentId}`, {
+        method: "PUT",
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newAppointment)
+      });
+      const data = res.json();
+      console.log("res-data", data);
+      
+    } catch(err) {
+      console.log("error",err);      
     }
-
-    // This is called after the API request attempt, regardless of success or failure
     setOpen(true);
-};
+  };
   const handleClose = () => {
     setOpen(false);
   };
    console.log("patientId,doctor,date,time,bp,streslevel,respiratoryRate,pulse ");
+// const formatTo12Hour = (isoString) => {
+//     // Return an empty string if the input is not a valid string or is empty
+//     if (typeof isoString !== 'string' || !isoString.trim()) {
+//         return "";
+//     }
+    
+//     // Create a Date object from the ISO string
+//     const date = new Date(isoString);
 
+//     // Get the hour from the Date object in local time
+//     let hours = date.getHours();
+    
+//     // Determine the AM/PM suffix
+//     const suffix = hours >= 12 ? 'PM' : 'AM';
+    
+//     // Convert 24-hour format to 12-hour format
+//     hours = hours % 12;
+//     // The hour '0' should be '12'
+//     hours = hours === 0 ? 12 : hours;
+
+//     // Return the formatted string
+//     return `${hours} ${suffix}`;
+// };
+
+// Example usage:
+const isoTime = "1970-01-01T15:00:00.000Z";
+const formattedTime = formatTo12Hour(isoTime); 
+
+console.log(formattedTime); 
+// Depending on your local time zone, the output will be different.
+// For IST (UTC+5:30), the output will be "8:30 PM".
+// The provided format `1970-01-01T15:00:00.000Z` is UTC, so it will be converted
+// to the equivalent time in the user's local time zone. For example, 15:00 UTC
+// is 8:30 PM in India Standard Time.
  
   return (
     <>
@@ -159,11 +138,11 @@ export default function AppointmentReviewStep3() {
           </Typography>
         {appointment.patient ? (
                   <Typography>
-                    {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+                    {appointment.patient.firstName}{" "}{appointment.patient.lastName}   | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
                       day: '2-digit',
                       month: 'short',
                       year: 'numeric',
-                    }) : ''} - {appointment.time.toUpperCase()}
+                    }) : ''} - {formatTo12Hour(appointment.time)}
                   </Typography>
                 ) : (
                   <Typography>No patient data available</Typography>
@@ -287,7 +266,7 @@ pulse:""}{" "}
           <Typography fontWeight="600" mb={1}>
             Visit History
           </Typography>
-             <VisitHistoryTable regId={appointment.patient.regId} />
+            <VisitHistoryTable regId={appointment.patient.patientId} />
 
           {/* Action Buttons */}
           <Grid container justifyContent="flex-end" spacing={2} mt={3}>

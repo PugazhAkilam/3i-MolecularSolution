@@ -25,7 +25,9 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
 //import api from "../api"; // import your configured axios instance
 import { getRegisteredPatients } from '../service/patientService'; // adjust path as needed
+import { getAppointmentsWithPatientDetails } from '../service/appointmentService'; // adjust path as needed
 import { formatDate } from '../utils/formatDate';
+
 const DOCTORS = ["Dr. Meera", "Dr. Ram", "Dr. Vikram"];
 
 export default function VisitorHistory() {
@@ -40,8 +42,8 @@ export default function VisitorHistory() {
     useEffect(() => {
       const fetchRegisteredPatients = async () => {
         try {
-          const data = await getRegisteredPatients();
-          setPatientRows(data.data);
+          const data = await getAppointmentsWithPatientDetails();
+          setPatientRows(data);
         } catch (err) {
           console.log('error', err);
         }
@@ -154,8 +156,15 @@ export default function VisitorHistory() {
             {filteredRows.map((row,i) => (
                <TableRow key={i}>
                                <TableCell>
-                                 <Link  color="primary" fontWeight={600} onClick={() => navigate(`/admin/VisitPatientId`)}>
-                                   {row.reg_patientId}
+                                 <Link  color="primary" fontWeight={600} sx={{cursor: 'pointer'}} onClick={() => navigate(`/admin/VisitPatientId`, {
+                                  state: {
+              regId: row.patientId,
+              name: row.firstName+" "+row.lastName,
+              mobile: row.mobile,
+              age: row.age,
+             }
+                                 })}>
+                                   {row.patientId}
                                  </Link>
                                </TableCell>
                                <TableCell>{row.firstName} {row.lastName}</TableCell>

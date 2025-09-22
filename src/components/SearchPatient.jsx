@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { act, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -119,6 +119,7 @@ const filteredPatients = search
       name: row.firstName+" "+row.lastName,
       mobile: row.mobile,
       age: row.age,
+      action: 'new' // Indicate this is for a new appointment
     }
   })}
 >

@@ -15,7 +15,6 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 function AppointmentStep2() {
   const [scanResults, setScanResults] = useState(null);
@@ -26,8 +25,9 @@ function AppointmentStep2() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const navigate = useNavigate();
+   
    const location = useLocation();
-const { date, selectedTime, selectedDoctor, patient } = location.state || {};
+  const { date, selectedTime, selectedDoctor, patient } = location.state || {};
    console.log("locat",location.state);
    
     const [appointment, setAppointment] = useState({
@@ -37,34 +37,21 @@ const { date, selectedTime, selectedDoctor, patient } = location.state || {};
     patient: null,
   });
 console.log("appaat",appointment);
-useEffect(() => {
+
+  useEffect(() => {
     if (date && selectedTime && selectedDoctor && patient) {
       setAppointment({
         date,
         time: selectedTime,
         doctor: selectedDoctor,
         patient,
-        
       });
     }
   }, [date, selectedTime, selectedDoctor, patient]);
- const [captureMode, setCaptureMode] = useState("now");
-console.log(selectedDoctor, date, selectedTime);
 
- const handleContinue = () => {
-  console.log("Continue clicked in Capture Now mode");
-  navigate("/admin/appointment-step3", { state: { appointment, scanResults ,action:"new"} });
-};
-
-  const handleChange = (event, newMode) => {
-    if (newMode !== null) {
-      setCaptureMode(newMode);
-    }
-  };
   // Start webcam stream when cameraOn becomes true
   useEffect(() => {
-  if (cameraOn) {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    if (cameraOn) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
         .then((stream) => {
@@ -79,23 +66,19 @@ console.log(selectedDoctor, date, selectedTime);
           setCameraOn(false);
         });
     } else {
-      alert("Camera API not supported or unavailable.");
-      setCameraOn(false);
+      // Stop webcam when cameraOff
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     }
-  } else {
-    // Stop webcam when cameraOff
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-  }
-  return () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-  };
-}, [cameraOn]);
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+    };
+  }, [cameraOn]);
 
   const handleScan = () => {
     setScanResults(null);
@@ -125,11 +108,6 @@ console.log(selectedDoctor, date, selectedTime);
       setCameraOn(false);
     }, 5000);
   };
-const formattedDate = date?.toLocaleDateString("en-GB", {
- // Abbreviated month (e.g., Sep)
-  day: "2-digit",   // Two-digit day (e.g., 14)
-    month: "short", 
-});
 
   return (
     // <Box
@@ -160,17 +138,18 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
               (Step 2 of 3)
             </Box>
           </Typography>
-          {appointment.patient ? (
-          <Typography>
-            {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            }) : ''} - {appointment.time.toUpperCase()}
-          </Typography>
-        ) : (
-          <Typography>No patient data available</Typography>
-        )}
+       {appointment.patient ? (
+  <Typography>
+    {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }) : ''} - {appointment.time.toUpperCase()}
+  </Typography>
+) : (
+  <Typography>No patient data available</Typography>
+)}
+
         
         </Box>
         {/* Main Content */}
@@ -178,47 +157,28 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
           <Typography variant="h6" fontWeight="600" mb={2}>
             Patient Vital Update
           </Typography>
-       <ToggleButtonGroup
-      value={captureMode}
-      exclusive
-      onChange={handleChange}
-      aria-label="capture mode"
-      sx={{ mb: 4 }}
-    >
-      <ToggleButton 
-  value="now"
-  aria-label="capture now"
-  sx={{
-    bgcolor: captureMode === "now" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "now" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "now" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
->
-  Capture Now
-</ToggleButton>
-
-
-      <ToggleButton
-        value="later"
-        aria-label="capture later"
-sx={{
-    bgcolor: captureMode === "later" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "later" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "later" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
-      >
-        Capture Later
-      </ToggleButton>
-    </ToggleButtonGroup>
-        {
-          captureMode === "now" && (
-            <Grid container spacing={4}>
+          <Stack direction="row" spacing={2} mb={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ bgcolor: "blue.100", color: "blue.700", textTransform: "none" }}
+            >
+              Capture Now
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                bgcolor: "grey.100",
+                color: "grey.700",
+                textTransform: "none",
+                borderColor: "grey.300",
+                "&:hover": { bgcolor: "grey.200" },
+              }}
+            >
+              Capture Later
+            </Button>
+          </Stack>
+          <Grid container spacing={4}>
             {/* LEFT SIDE: How to take assessment & Patient Vitals */}
             <Grid item xs={12} md={6}>
               <Stack spacing={4}>
@@ -486,8 +446,6 @@ sx={{
               </Box>
             </Grid>
           </Grid>
-          )
-        }  
         </Box>
         {/* Footer */}
         <Box
@@ -501,21 +459,16 @@ sx={{
             alignItems: "center",
           }}
         >
-          <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }} onClick={() => navigate(-1)}>
+          <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }}>
             Back
           </Button>
           <Box sx={{ display: "flex", gap: 2 }}>
             <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }}>
               Cancel
             </Button>
-           <Button
-        variant="contained"
-        color="primary"
-        sx={{ textTransform: "none" }}
-        onClick={handleContinue}
-      >
-        {captureMode === "now" ? "Continue" : "Skip & Continue"}
-      </Button>
+            <Button variant="contained" color="primary" sx={{ textTransform: "none" }} onClick={() => navigate('/admin/appointment-step3')}>
+              Skip &amp; Continue
+            </Button>
           </Box>
         </Box>
       </Box>

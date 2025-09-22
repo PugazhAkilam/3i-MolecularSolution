@@ -22,6 +22,9 @@ import PatientsList from '../components/PatientList';
 import AppointmentStep1 from '../components/Appointment/Step1';
 import AppointmentStep2 from '../components/Appointment/Step2';
 import AppointmentStep3 from '../components/Appointment/Step3';
+import UpdateAppointmentStep1 from '../components/UpdateAppointment/Step1';
+import UpdateAppointmentStep2 from '../components/UpdateAppointment/Step2';
+import UpdateAppointmentStep3 from '../components/UpdateAppointment/Step3';
 import SearchPatient from '../components/SearchPatient';
 import VisitorHistoryId from '../components/VisitPatientId';
 import ConsultationPage from '../pages/ConsultationPage';
@@ -66,6 +69,9 @@ const AppRoutes = () => {
              <Route path="appointment-step1" element={<AppointmentStep1 />} />
                 <Route path="appointment-step2" element={<AppointmentStep2 />} />
                    <Route path="appointment-step3" element={<AppointmentStep3 />} />
+                    <Route path="update-appointment-step1" element={<UpdateAppointmentStep1 />} />
+                <Route path="update-appointment-step2" element={<UpdateAppointmentStep2 />} />
+                   <Route path="update-appointment-step3" element={<UpdateAppointmentStep3 />} />
           <Route path="newpatient" element={<NewPatient />} />
           <Route path="regpatient" element={<RegPatient />} />
           <Route path="visitorhistory" element={<VisitHis />} />
