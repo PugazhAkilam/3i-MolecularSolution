@@ -20,7 +20,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -44,8 +44,7 @@ const rowsPerPage = 10;
 export default function PatientsList() {
   const [search, setSearch] = useState("");
   const [ userData, setUserData ] = useState([]);
-  const [ appointments, setAppointments] = useState([]);
-
+ const [isdeleted,setIsDeleted]=useState(false);
   // Fetch data from API filtered by selectedDate
  
 
@@ -64,6 +63,7 @@ const navigate=useNavigate();
         const res = await fetch(url);
         const data = await res.json();
         setUserData(data.data);
+        setIsDeleted(false);
       } catch (err) {
         console.error("Failed to fetch data", err);
         setUserData([]);
@@ -73,31 +73,29 @@ const navigate=useNavigate();
     if (selectedDate) {
       fetchData();
     }
-  }, [selectedDate]);
-
-
-    const deleteAppointment = async (id) => {      
-      try {
-        const res = await fetch(`http://localhost:8000/api/deleteAppointment${id}`, 
-          {
-            method: 'DELETE',
-          }
-        );
-        const data = await res.json();
-        console.log("del-data",data);
-        setUserData(data);
-      
-      } catch(err) {
-        console.log("error",err);
-        console.log("failed to delete");        
-      }
-    };
+  }, [selectedDate, isdeleted]);
 
   // Handler for calendar button
   const handleCalendarClick = () => {
     setShowDatePicker(true);
     setSelectedDate(new Date()); // focus today
   };
+  const deleteAppointment = async (id) => {      
+      try {
+        const res = await fetch(`http://localhost:8000/api/deleteAppointment/${id}`, 
+          {
+            method: 'DELETE',
+          }
+        );
+        const data = await res.json();
+        console.log("del-data",data);
+        setIsDeleted(true);
+      
+      } catch(err) {
+        console.log("error",err);
+        console.log("failed to delete");        
+      }
+    };
 const handleDelete = (id) => {
   Swal.fire({
     title: 'Are you sure?',
@@ -115,7 +113,6 @@ const handleDelete = (id) => {
     }
   });
 };
-
   const [currentPage, setCurrentPage] = useState(1);
   // ... existing states like showDatePicker, selectedDate
 
@@ -149,6 +146,7 @@ const handleDelete = (id) => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+console.log("userdata",userData);
 
   // Reset to first page on search or userData change
   useEffect(() => {
@@ -184,6 +182,9 @@ const handleDelete = (id) => {
 
   // Inside PatientsList component:
 
+ const handleConsult = (row) => {
+  navigate('/admin/consultation', { state: { patient: row } });
+};
   return (
     <Box sx={{ 
       //  bgcolor: "#0c83faff", 
@@ -310,7 +311,7 @@ const handleDelete = (id) => {
                 <TableRow key={index} hover>
                   {/* ... table cells unchanged */}
                   <TableCell>
-                    <Link href="#"  color="primary" fontWeight={600}>
+                    <Link onClick={() =>handleConsult(row)} sx={{ cursor: 'pointer' }} color="primary" fontWeight={600}>
                       {row.patientId}
                     </Link>
                   </TableCell>
@@ -318,29 +319,41 @@ const handleDelete = (id) => {
                   <TableCell>{row.mobile}</TableCell>
                   <TableCell>{row.age}</TableCell>
                   <TableCell>{row.doctor}</TableCell>
-                  <TableCell>{row.bloodPressure}</TableCell>
-                  <TableCell>{row.pulse}</TableCell>
-                  <TableCell>{row.respiratoryRate}</TableCell>
+                 <TableCell>{row.bloodPressure ?? '-'}</TableCell>
+<TableCell>{row.pulse ?? '-'}</TableCell>
+<TableCell>{row.respiratoryRate ?? '-'}</TableCell>
+
                 <TableCell>
   <Tooltip title="Edit">
-    <IconButton color="primary"  onClick={() => navigate('/admin/appointment-step1')}>
+    <IconButton color="primary"    onClick={() => navigate('/admin/update-appointment-step1', {
+    state: {
+      regId: row.patientId,
+      name: row.firstName+" "+row.lastName,
+      mobile: row.mobile,
+      age: row.age,
+      data: row,
+      action: 'edit' // Indicate this is for editing an appointment
+    }
+  })}>
      <EditIcon />
     </IconButton>
   </Tooltip>
-{((row.bp ==null)||(!row.bmi)) && (
-    <Tooltip title="Scan Vital">
-      <IconButton
-        color="primary"
-        onClick={() => navigate('/admin/appointment-step2')}
-      >
-        <CameraAltIcon />
-      </IconButton>
-    </Tooltip>
-  )}
+{((row.bloodPressure == null) || (row.pulse == null)) && (
+  <Tooltip title="Scan Vital">
+    <IconButton
+      color="primary"
+      onClick={() => navigate('/admin/update-appointment-step2', 
+           { state: { date:row.date, selectedTime:row.times, selectedDoctor:row.doctor, patient:row, edit:'edit' } })}
+    >
+      <CameraAltIcon />
+    </IconButton>
+  </Tooltip>
+)}
+
   
 
   <Tooltip title="Delete">
-  <IconButton color="primary" onClick={() => handleDelete(row.patientId)}>
+ <IconButton color="primary" onClick={() => handleDelete(row.patientId)}>
     <RiCloseCircleFill />
   </IconButton>
 </Tooltip>

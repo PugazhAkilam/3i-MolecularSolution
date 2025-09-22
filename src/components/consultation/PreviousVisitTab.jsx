@@ -1,5 +1,5 @@
 // PreviousVisitTab.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import {
   Divider,
 } from '@mui/material';
 
-const PreviousVisitTab = () => {
+const PreviousVisitTab = ({patientData}) => {
   const visitData = {
     visitedDate: '02-Feb-2025',
     chiefComplaint: 'Cold and Cough for past 3 days',
@@ -27,6 +27,38 @@ const PreviousVisitTab = () => {
       stressLevel: 'Low',
     },
   };
+      const [loading, setLoading] = useState(true);
+      const [prescriptions, setPrescriptions] = useState([]);
+        const [error, setError] = useState(null);
+  useEffect(() => {
+        const fetchMedicalHistory = async () => {
+            if (!patientData || !patientData.patientId) {
+                setLoading(false);
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:8000/getMedhistory/${patientData.patientId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch medical history');
+                }
+                const data = await response.json();
+                
+                // setChiefComplaint(data.ChiefComplaint || '');
+                // setSummaryNote(data.SummaryNote || '');
+                // setPreExistingProblems(data.PreExisting || []);
+                // setAllergy(data.Allergy || '');
+                setPrescriptions(data.prescriptions || []);
+
+            } catch (err) {
+                console.error('Error fetching medical history:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchMedicalHistory();
+    }, [patientData]);
 
   return (
     <>
@@ -56,15 +88,16 @@ const PreviousVisitTab = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {visitData.prescription.map((med, index) => (
-            <TableRow key={index}>
-              <TableCell>{med.name}</TableCell>
-              <TableCell>{med.dosage}</TableCell>
-              <TableCell>{med.duration}</TableCell>
-              <TableCell>{med.frequency}</TableCell>
-              <TableCell>{med.notes}</TableCell>
-            </TableRow>
-          ))}
+         {prescriptions.map((med, index) => (
+                        <TableRow key={index}>
+                            <TableCell>{med.name}</TableCell>
+                            <TableCell>{med.dosage}</TableCell>
+                            <TableCell>{med.duration}</TableCell>
+                            <TableCell>{med.frequency}</TableCell>
+                            <TableCell>{med.notes}</TableCell>
+                         
+                        </TableRow>
+                    ))}
         </TableBody>
       </Table>
 

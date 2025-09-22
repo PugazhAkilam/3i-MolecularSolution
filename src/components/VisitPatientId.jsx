@@ -20,6 +20,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useLocation } from 'react-router-dom';
+import VisitHistoryTable from './visitHis/VisitHistoryTable';
 
 
 export default function VisitorHistoryId() {
@@ -32,26 +33,28 @@ export default function VisitorHistoryId() {
           console.log("patId", patientData.regId);
   console.log("patient",patient);
   
+  // console.log("visitor appointment",data);
+  
 
   useEffect(() => {
   const fetchAllDetails = async () => {
     try {
       console.log("patId", patientData.regId);
 
-      // Fetch selected patient
-      const selectedPatientRes = await fetch(`http://localhost:8000/api/selectedPatient/${patientData.regId}`);
-      const selectedPatientData = await selectedPatientRes.json();
-      console.log("res-data selectedPatient", selectedPatientData.data);
-      setData(selectedPatientData.data);
+      // // Fetch selected patient
+      // const selectedPatientRes = await fetch(`http://localhost:8000/api/selectedPatient/${patientData.regId}`);
+      // const selectedPatientData = await selectedPatientRes.json();
+      // console.log("res-data selectedPatient", selectedPatientData.data);
+      // setData(selectedPatientData.data);
 
       // Fetch patient details
-      const patientDetailsRes = await fetch(`http://localhost:8000/api/patientDetails/${patientData.regId}`);
+      const patientDetailsRes = await fetch(`http://localhost:8000/api/patient/patientDetails/${patientData.regId}`);
       const patientDetailsData = await patientDetailsRes.json();
       console.log("res-data patientDetails", patientDetailsData.data);
       setPatient(patientDetailsData.data);
 
       // Fetch appointment details
-      const appointmentRes = await fetch(`http://localhost:8000/api/appointmentDetails/${patientData.regId}`);
+      const appointmentRes = await fetch(`http://localhost:8000/api/appointment/appointmentDetails/${patientData.regId}`);
       const appointmentData = await appointmentRes.json();
       console.log("res-data appointmentDetails", appointmentData.data);
       setAppointment(appointmentData.data);
@@ -66,6 +69,8 @@ export default function VisitorHistoryId() {
     fetchAllDetails();
   }
 }, [patientData.regId]);
+  
+console.log("appointment",appointment);
 
   return (
     <Box sx={{ p: 1, bgcolor: '#ffffff', minHeight: '100vh' }}>
@@ -134,7 +139,11 @@ export default function VisitorHistoryId() {
 
         {/* Vital Info */}
         <Typography variant="body2" mb={2}>
-          Patient Vital Info <span style={{ color: '#848484' }}>(updated on 10-Feb-2025)</span>
+          Patient Vital Info <span style={{ color: '#848484' }}>(updated on{appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}) : null})</span>
         </Typography>
         <Grid container spacing={2} alignItems="center" sx={{ mb: 1 }}>
 
@@ -189,12 +198,14 @@ export default function VisitorHistoryId() {
       <Typography variant="h6" fontWeight={500} mb={2}>
         Visit History
       </Typography>
-      <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
+
+      <VisitHistoryTable regId={patientData.regId} />
+      {/* <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Visited Date</TableCell>
-              <TableCell>Photo</TableCell>
+              <TableCell>respiratoryRate</TableCell>
               <TableCell>BP Reading</TableCell>
               <TableCell>Pulse</TableCell>
               <TableCell>Notes</TableCell>
@@ -202,7 +213,7 @@ export default function VisitorHistoryId() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Row 1 */}
+        
             {data && data.map((row) => (
               
                  <TableRow>
@@ -212,7 +223,7 @@ export default function VisitorHistoryId() {
   year: 'numeric',
 }) : null}</TableCell>
               <TableCell>
-                <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }} />
+             {row.respiratoryRate}
               </TableCell>
               <TableCell>{row.bloodPressure}</TableCell>
               <TableCell>{row.pulse}</TableCell>
@@ -234,7 +245,7 @@ export default function VisitorHistoryId() {
                    
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
 
       {/* Action Buttons */}
                <Box

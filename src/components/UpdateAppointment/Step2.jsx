@@ -16,7 +16,7 @@ import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-
+import { formatTo12Hour } from "../../utils/formatDate";
 function AppointmentStep2() {
   const [scanResults, setScanResults] = useState(null);
   const [scanning, setScanning] = useState(false);
@@ -28,7 +28,7 @@ function AppointmentStep2() {
   const navigate = useNavigate();
    const location = useLocation();
 const { date, selectedTime, selectedDoctor, patient } = location.state || {};
-   console.log("locat",location.state);
+   console.log("updatestatus",location.state);
    
     const [appointment, setAppointment] = useState({
     date: null,
@@ -44,16 +44,17 @@ useEffect(() => {
         time: selectedTime,
         doctor: selectedDoctor,
         patient,
-        
       });
     }
   }, [date, selectedTime, selectedDoctor, patient]);
+
+
  const [captureMode, setCaptureMode] = useState("now");
-console.log(selectedDoctor, date, selectedTime);
+//console.log(selectedDoctor, date, selectedTime);
 
  const handleContinue = () => {
   console.log("Continue clicked in Capture Now mode");
-  navigate("/admin/appointment-step3", { state: { appointment, scanResults ,action:"new"} });
+  navigate("/admin/update-appointment-step3", { state: { appointment, scanResults,action:"edit" } });
 };
 
   const handleChange = (event, newMode) => {
@@ -125,12 +126,21 @@ console.log(selectedDoctor, date, selectedTime);
       setCameraOn(false);
     }, 5000);
   };
-const formattedDate = date?.toLocaleDateString("en-GB", {
- // Abbreviated month (e.g., Sep)
-  day: "2-digit",   // Two-digit day (e.g., 14)
-    month: "short", 
-});
+// const formattedDate = date?.toLocaleDateString("en-GB", {
+//  // Abbreviated month (e.g., Sep)
+//   day: "2-digit",   // Two-digit day (e.g., 14)
+//     month: "short", 
+// });
+const formattedTime = selectedTime
+  ? new Date(selectedTime).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+  : "";
 
+
+console.log("selecttime",formatTo12Hour(selectedTime)); 
   return (
     // <Box
     //   sx={{
@@ -162,11 +172,11 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
           </Typography>
           {appointment.patient ? (
           <Typography>
-            {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+            {appointment.patient.firstName}{" "}{appointment.patient.lastName} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
-            }) : ''} - {appointment.time.toUpperCase()}
+            }) : ''} - {formattedTime}
           </Typography>
         ) : (
           <Typography>No patient data available</Typography>

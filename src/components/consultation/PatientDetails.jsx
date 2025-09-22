@@ -20,6 +20,9 @@ const valueStyle = {
 };
 
 const PatientDetails = ({ patientData, appointmentData }) => {
+
+    console.log("pdata",patientData);
+    
   return (
     <Box sx={{ p: 3, minWidth: 250 }}>
       <Typography variant="h6" component="h2" gutterBottom>
@@ -27,7 +30,7 @@ const PatientDetails = ({ patientData, appointmentData }) => {
       </Typography>
       <Box sx={rowStyle}>
         <Typography variant="body2" sx={labelStyle}>Name:</Typography>
-        <Typography variant="body2" sx={valueStyle}>{patientData.name}</Typography>
+        <Typography variant="body2" sx={valueStyle}>{patientData.firstName} {patientData.lastName}</Typography>
       </Box>
       <Box sx={rowStyle}>
         <Typography variant="body2" sx={labelStyle}>Age:</Typography>
@@ -59,7 +62,7 @@ const PatientDetails = ({ patientData, appointmentData }) => {
       </Box>
       <Box sx={{ ...rowStyle, mb: 2 }}>
         <Typography variant="body2" sx={labelStyle}>Address:</Typography>
-        <Typography variant="body2" sx={valueStyle}>{patientData.address}</Typography>
+        <Typography variant="body2" sx={valueStyle}>{patientData.addressLine1}</Typography>
       </Box>
 
       <Typography variant="h6" component="h2" gutterBottom>
