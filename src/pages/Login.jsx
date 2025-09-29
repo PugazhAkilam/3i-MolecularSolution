@@ -16,7 +16,7 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
-
+import { API_URL } from '../components/config';
 function Login() {
   const navigate=useNavigate()
   
@@ -33,10 +33,10 @@ const handleChange = (e) => {
 }
 
 const handleSubmit = async () => {
- // console.log("userData:::", userData)
+ // console.log("userData::", userData)
   
   try{
-      const res = await fetch('http://localhost:8000/api/login', {
+      const res = await fetch(`${API_URL}/patient/login`, {
       method: "POST",
       headers: {
               "Content-Type": 'application/json',

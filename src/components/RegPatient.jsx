@@ -150,9 +150,9 @@ export default function RegisteredPatients() {
             sx={{ minWidth: 120 }}
           >
             <MenuItem value=''>All</MenuItem>
-            <MenuItem value='Dr. Meera'>Dr. Meera</MenuItem>
-            <MenuItem value='Dr. Ram'>Dr. Ram</MenuItem>
-            <MenuItem value='Dr. Vikram'>Dr. Vikram</MenuItem>
+            <MenuItem value='Dr.Nitin'>Dr.Nitin</MenuItem>
+            <MenuItem value='Dr.Ram'>Dr.Ram</MenuItem>
+            <MenuItem value='Dr.Kumar'>Dr.Kumar</MenuItem>
           </TextField>
         </Box>
         <TableContainer component={Paper}>

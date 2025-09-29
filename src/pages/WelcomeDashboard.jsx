@@ -16,7 +16,9 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Appointment from '../components/Appointment';
 import CountUp from 'react-countup';
 import axios from 'axios';
-
+import { API_URL } from '../components/config';
+// import { getPatientsStats } from '../service/patientService';
+// import { getTodaysAppointmentapi } from '../service/appointmentService';
 ChartJS.register(
   BarElement,
   ArcElement,
@@ -113,10 +115,14 @@ const Dashboard = () => {
           { data: patientStats },
           { data: appointmentStats }
         ] = await Promise.all([
-          axios.get('http://localhost:8000/dashboard/patients-stats'),
-          axios.get('http://localhost:8000/dashboard/todays-appointments')
+          axios.get(`${API_URL}/patient/dashboard/patients-stats`),
+          axios.get(`${API_URL}/appointment/dashboard/todays-appointments`)
         ]);
-
+        // const data1 =  getPatientsStats();
+        // console.log("data1",data1);
+        // const data2 = getTodaysAppointmentapi();
+        // console.log("data2", data2);
+        
         // Update stats cards
         setStatData([
           { label: 'Total Patients', value: patientStats.totalPatients, icon: <FaUsers size={28} color="#808099" /> },

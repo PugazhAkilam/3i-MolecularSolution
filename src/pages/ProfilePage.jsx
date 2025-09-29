@@ -15,6 +15,7 @@ import { useAuth } from '../context/AuthContext';
 
 const ProfilePage = () => { 
   const { user,loading } = useAuth();
+  
   if (loading) {
     return <div>Loading...</div>;
   }

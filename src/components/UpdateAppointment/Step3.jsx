@@ -17,7 +17,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Tooltip
+  Tooltip,
+  Box
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
@@ -30,6 +31,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { formatTo12Hour } from "../../utils/formatDate";
 import VisitHistoryTable from "../visitHis/VisitHistoryTable";
+import { API_URL } from "../config";
 
 const visitHistory = [
   {
@@ -68,7 +70,7 @@ export default function AppointmentReviewStep3() {
     console.log("nA",newAppointment);
     
     try {
-      const res = await fetch(`http://localhost:8000/api/editAppointment/${appointment.patient.appointmentId}`, {
+      const res = await fetch(`${API_URL}/appointment/editAppointment/${appointment.patient.appointmentId}`, {
         method: "PUT",
         headers: {
         'Content-Type': 'application/json'
@@ -269,7 +271,28 @@ pulse:""}{" "}
             <VisitHistoryTable regId={appointment.patient.patientId} />
 
           {/* Action Buttons */}
-          <Grid container justifyContent="flex-end" spacing={2} mt={3}>
+           <Box
+                                mt={4}
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                gap={2}
+                              >
+                                <Button variant="outlined" onClick={() => navigate(-1)}>
+                                  Back
+                                </Button>
+                                <Box display="flex" gap={2}>
+                                  <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
+                                 <Button
+                        variant="contained"
+                        onClick={handleSave}
+                      >
+                      Save &amp; Continue
+                      </Button>
+                      
+                                </Box>
+                              </Box>
+          {/* <Grid container justifyContent="flex-end" spacing={2} mt={3}>
             <Grid item>
               <Button variant="outlined">Cancel</Button>
             </Grid>
@@ -278,7 +301,7 @@ pulse:""}{" "}
                 Save &amp; Continue
               </Button>
             </Grid>
-          </Grid>
+          </Grid> */}
         </CardContent>
       </Card>
 

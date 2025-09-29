@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, IconButton } from '@mui/material';
 import { RiCloseCircleFill } from "react-icons/ri";
+import { API_URL } from '../config';
 
 const VisitHistoryTable = ({ regId }) => {
   const [data, setData] = useState([]);
@@ -8,7 +9,7 @@ const VisitHistoryTable = ({ regId }) => {
   useEffect(() => {
     async function fetchVisitHistory() {
       try {
-        const res = await fetch(`http://localhost:8000/api/selectedPatient/${regId}`);
+        const res = await fetch(`${API_URL}/patient/selectedPatient/${regId}`);
         const result = await res.json();
         setData(result.data);
       } catch (err) {

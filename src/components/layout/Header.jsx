@@ -4,6 +4,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo2.png"
+
+
 const Header = ({ handleDrawerToggle, isDarkMode, toggleTheme, drawerWidth,user,loading }) => {
   const navigate = useNavigate();
  const location=useLocation();

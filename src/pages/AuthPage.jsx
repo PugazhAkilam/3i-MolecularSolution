@@ -11,9 +11,12 @@ import { useNavigate } from 'react-router-dom';
 // Add this import
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-const apiUrl=import.meta.env.VITE_API_URL;
+import { API_URL } from '../components/config';
 
 const AuthPage = () => {
+
+  console.log("api",API_URL);
+  
   // Add this line
   const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
@@ -72,7 +75,7 @@ const AuthPage = () => {
       if (isLogin) {
         if (authMethod === 'otp') {
           // Call API to send OTP
-          const response = await fetch(`${apiUrl}/auth/send-otp`, {
+          const response = await fetch(`${API_URL}/auth/send-otp`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -91,7 +94,7 @@ const AuthPage = () => {
           }
         } else {
           // Handle password login
-          const response = await fetch(`${apiUrl}/auth/login`, {
+          const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -132,7 +135,7 @@ const AuthPage = () => {
         }
         
         // Call API to register user
-        const response = await fetch(`${apiUrl}/auth/register`, {
+        const response = await fetch(`${API_URL}/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -175,7 +178,7 @@ const AuthPage = () => {
     
     try {
       // Call API to verify OTP
-      const response = await fetch(`${apiUrl}/auth/verify-otp`, {
+      const response = await fetch(`${API_URL}/auth/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

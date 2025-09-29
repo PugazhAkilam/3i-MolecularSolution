@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import { API_URL } from "../components/config";
 function ForgotPasswordAndReset() {
   const [page, setPage] = useState("email");
   const [email, setEmail] = useState("");
@@ -23,6 +23,7 @@ function ForgotPasswordAndReset() {
   const [token, setToken] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  
 
   useEffect(() => {
     // Check for a token in the URL query parameters
@@ -37,7 +38,7 @@ function ForgotPasswordAndReset() {
   const handleSendRequest = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/api/user/forgot-password", {
+      const response = await fetch(`${API_URL}/user/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -66,7 +67,7 @@ function ForgotPasswordAndReset() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/user/reset-password", {
+      const response = await fetch(`${API_URL}/user/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, newPassword }),

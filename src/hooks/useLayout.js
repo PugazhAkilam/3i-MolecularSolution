@@ -5,7 +5,8 @@ import { useTheme as useMuiTheme, useMediaQuery } from '@mui/material';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthContext';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+// const apiUrl = import.meta.env.VITE_API_URL;
+import { API_URL } from '../components/config';
 
 const useLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,7 +30,7 @@ const useLayout = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${apiUrl}/auth/logout`, {
+        await fetch(`${API_URL}/auth/logout`, {
           method: 'POST',
           credentials: 'include'
         });

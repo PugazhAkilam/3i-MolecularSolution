@@ -101,9 +101,9 @@ const filteredPatients = search
                 filteredPatients.map((row, i) => (
                 <TableRow key={i}>
                                                <TableCell>
-                                                 <Link  color="primary" fontWeight={600} onClick={() => navigate(`/admin/VisitPatientId`)}>
+                                                
                                                    {row.reg_patientId}
-                                                 </Link>
+                                                 
                                                </TableCell>
                                                <TableCell>{row.firstName} {row.lastName}</TableCell>
                                                <TableCell>{row.mobile}</TableCell>

@@ -15,3 +15,34 @@ export const getAppointmentsWithPatientDetails = async () => {
     throw error;
   }
 };
+
+export const patientList = async (formattedDate) => {
+  try {
+    const response = await api.get(`/patient/patientList?date=${formattedDate}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch data", error);
+    throw error;
+  }
+};
+
+export const deleteAppointmentapi = async (id) => {
+  try {
+    const response = await api.delete(`/appointment/deleteAppointment/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to delete appointment", err);
+    throw err;
+  }
+};
+
+export const getTodaysAppointmentapi = async () => {
+  try {
+    const response = await api.get('/appointment/dashboard/todays-appointments');
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch Today's appointment data.");
+    throw error;
+  }
+};
+

@@ -17,7 +17,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Tooltip
+  Tooltip,
+  Box
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
@@ -29,7 +30,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { RiCloseCircleFill } from "react-icons/ri";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import VisitHistoryTable from "../visitHis/VisitHistoryTable";
-
+import { API_URL } from "../config";
 
 const visitHistory = [
   {
@@ -96,11 +97,11 @@ export default function AppointmentReviewStep3() {
     // Determine API endpoint and method based on whether an appointment ID exists
     if (newAppointment.patient && newAppointment.patient.patientId) {
         // If an appointmentId exists, it's an update
-        apiUrl = `http://localhost:8000/api/editAppointment/${newAppointment.patient.patientId}`;
+        apiUrl = `${API_URL}/appointment/editAppointment/${newAppointment.patient.patientId}`;
         method = "PUT";
     } else if (newAppointment.patient.regId) {
         // If it's a new registration, it's a create operation
-        apiUrl = 'http://localhost:8000/api/appointment';
+        apiUrl = `${API_URL}/appointment/createAppointment`;
         method = "POST";
     } else {
         // Handle case where neither ID is available
@@ -290,16 +291,37 @@ pulse:""}{" "}
              <VisitHistoryTable regId={appointment.patient.regId} />
 
           {/* Action Buttons */}
-          <Grid container justifyContent="flex-end" spacing={2} mt={3}>
-            <Grid item>
-              <Button variant="outlined">Cancel</Button>
+        
+             <Box
+                      mt={4}
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      gap={2}
+                    >
+                      <Button variant="outlined" onClick={() => navigate(-1)}>
+                        Back
+                      </Button>
+                      <Box display="flex" gap={2}>
+                        <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
+                       <Button
+              variant="contained"
+              onClick={handleSave}
+            >
+            Save &amp; Continue
+            </Button>
+            
+                      </Box>
+                    </Box>
+            {/* <Grid item>
+            <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
             </Grid>
             <Grid item>
               <Button variant="contained" onClick={handleSave}>
                 Save &amp; Continue
               </Button>
-            </Grid>
-          </Grid>
+            </Grid> */}
+         
         </CardContent>
       </Card>
 
