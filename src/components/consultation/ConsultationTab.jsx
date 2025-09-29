@@ -12,16 +12,22 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody,
+    TableBody,Grid,
     IconButton,
 } from '@mui/material';
-import { styled } from '@mui/system';
+import { color, styled } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+// import ShowChartIcon from '@mui/icons-material/ShowChart';
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+// import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { RiCloseCircleFill } from "react-icons/ri";
+import { API_URL } from '../config';
+import { LuActivity } from "react-icons/lu";
+import { FaHeartbeat } from "react-icons/fa";
+import { FaLungs } from "react-icons/fa";
+import { IoPersonSharp } from "react-icons/io5";
+import CloseIcon from '@mui/icons-material/Close';
 
 const VitalInfoBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -81,7 +87,7 @@ const ConsultationTab = ({ patientData }) => {
                 return;
             }
             try {
-                const response = await fetch(`http://localhost:8000/getMedhistory/${patientData.patientId}`);
+                const response = await fetch(`${API_URL}/patient/getMedhistory/${patientData.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch medical history');
                 }
@@ -135,7 +141,7 @@ const ConsultationTab = ({ patientData }) => {
                 return;
             }
             try {
-                const response = await fetch(`http://localhost:8000/getMedhistory/${patientData.patientId}`);
+                const response = await fetch(`${API_URL}/patient/getMedhistory/${patientData.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch medical history');
                 }
@@ -172,7 +178,7 @@ const ConsultationTab = ({ patientData }) => {
         }
 
         try {
-            const response = await fetch('http://localhost:8000/saveConsultation', {
+            const response = await fetch(`${API_URL}/patient/saveConsultation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -206,145 +212,210 @@ const ConsultationTab = ({ patientData }) => {
     }
 
     return (
-        <Box sx={{ padding: '0 30px' }}>
-            <Typography variant="h6" sx={{ mb: 0 }} gutterBottom>
+        <Box sx={{ padding: '0 30px' ,}}>
+            
+        <Box sx={{ display: 'flex', flexDirection: 'column'}}>
+            <Typography variant="body-1" sx={{ mb: 0 , fontWeight: 'bold'}} gutterBottom>
                 Patient Vital Info
             </Typography>
-
-            <VitalInfoBox>
-                <VitalItem>
-                    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <ShowChartIcon color="primary" fontSize="small" />
-                        Blood Pressure
-                    </Typography>
-                    <Typography variant="h6" color="primary.main" fontWeight={700} sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                        {patientData.bloodPressure || "120/80"}
-                        <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
-                            mmHg
-                        </Typography>
-                    </Typography>
-                </VitalItem>
-                <VitalItem>
-                    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <FavoriteBorderIcon color="primary" fontSize="small" />
-                        Pulse
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: "#2466d2", display: 'flex', alignItems: 'baseline', gap: 1 }} fontWeight={700}>
-                        {patientData.pulse || "Pulse"}
-                        <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
-                            BPM
-                        </Typography>
-                    </Typography>
-                </VitalItem>
-                <VitalItem>
-                    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <PeopleAltOutlinedIcon color="primary" fontSize="small" />
-                        Respiratory rate
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: "#2466d2", display: 'flex', alignItems: 'baseline', gap: 1 }} fontWeight={700}>
-                        {patientData.respiratoryRate || "respiratoryRate"}
-                        <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
-                            Per min
-                        </Typography>
-                    </Typography>
-                </VitalItem>
-                <VitalItem>
-                    <Typography fontWeight={600} fontSize={15} sx={{ mb: 0.5 }}>
-                        <PersonOutlineIcon color="primary" fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                        Stress Level
-                    </Typography>
-                    <Typography
-                        fontWeight={700}
-                        color="primary"
-                        sx={{ px: 1, display: 'inline-block', fontSize: "22px" }}
-                    >
-                        {patientData.stressLevel || "stressLevel"}
-                    </Typography>
-                </VitalItem>
-            </VitalInfoBox>
-
-            <Typography variant="body1" gutterBottom>
-                Chief Complaint
+            <Typography variant="body-2" sx={{ mb: 0 }} gutterBottom>
+                (updated on 28-Jul-2025)
             </Typography>
-            <TextField
-                fullWidth
-                multiline
-                rows={1}
-                value={chiefComplaint}
-                onChange={(e) => setChiefComplaint(e.target.value)}
-                sx={{ mb: 3 }}
-            />
+        </Box>
 
-            <Typography variant="body1" gutterBottom>
-                Summary Note
-            </Typography>
-            <TextField
-                fullWidth
-                multiline
-                rows={4}
-                placeholder="Enter summary notes here"
-                value={summaryNote}
-                onChange={(e) => setSummaryNote(e.target.value)}
-                sx={{ mb: 3 }}
-            />
+          <VitalInfoBox sx={{ display: 'flex' }}>
+  <VitalItem sx={{
+    pl: 5,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minHeight: '80px'
+  }}>
+    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      <LuActivity size={18} style={{ marginRight: 10 }} />
+      Blood Pressure
+    </Typography>
+    <Typography variant="h6" color="#0F52BA" fontWeight={700} sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+      {patientData.bloodPressure || "120/80"}
+      <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
+        mmHg
+      </Typography>
+    </Typography>
+  </VitalItem>
 
-            <Typography variant="body1" gutterBottom>
-                Pre-existing Problems
-            </Typography>
-            <FormControl fullWidth sx={{ mb: 3 }}>
-                <Select
-                    multiple
-                    value={preExistingProblems}
-                    onChange={(e) => setPreExistingProblems(e.target.value)}
-                    renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {selected.map((value) => (
-                                <Chip
-                                    key={value}
-                                    label={value}
-                                    onDelete={() => handleDeleteProblem(value)}
-                                    onMouseDown={(event) => event.stopPropagation()}
-                                />
-                            ))}
-                        </Box>
-                    )}
-                    displayEmpty
-                >
-                    {['Biabties', 'Knee Pain', 'Asthma', 'Diabetes'].map((name) => (
-                        <MenuItem key={name} value={name}>
-                            {name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+  <VitalItem sx={{
+    borderLeft: '2px solid #E5E7EB',
+    pl: 5,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minHeight: '80px'
+  }}>
+    
+    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      <FaHeartbeat color="primary" size={18} style={{ marginRight: 10 }} />
+      Pulse
+    </Typography>
+    <Typography variant="h6" sx={{ color: "#0F52BA", display: 'flex', alignItems: 'baseline', gap: 1 }} fontWeight={700}>
+      {patientData.pulse || "-"}
+      <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
+         {patientData.pulse? "BPM" : " "}
+      </Typography>
+    </Typography>
+  </VitalItem>
 
-            <Typography variant="body1" gutterBottom>
-                Allergy Details
-            </Typography>
-            <TextField
-                fullWidth
-                multiline
-                rows={2}
-                placeholder="Enter allergy details here"
-                value={allergy}
-                onChange={(e) => setAllergy(e.target.value)}
-                sx={{ mb: 3 }}
-            />
+  <VitalItem sx={{
+    borderLeft: '2px solid #E5E7EB',
+    pl: 5,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minHeight: '80px'
+  }}>
+    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      <FaLungs color="primary" size={20} style={{ marginRight: 10 }} />
+      Respiratory rate
+    </Typography>
+    <Typography variant="h6" sx={{ color: "#0F52BA", display: 'flex', alignItems: 'baseline', gap: 1 }} fontWeight={700}>
+      {patientData.respiratoryRate || "-"}
+      <Typography variant="caption" color="text.secondary" component="span" sx={{ fontWeight: "bold", fontSize: "15px" }}>
+         {patientData.respiratoryRate? "Per min" : " "}
+      </Typography>
+    </Typography>
+  </VitalItem>
+
+  <VitalItem sx={{
+    borderLeft: '2px solid #E5E7EB',
+    pl: 5,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minHeight: '80px'
+  }}>
+    <Typography fontWeight={600} fontSize={15} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      <IoPersonSharp color="primary" size={20} style={{ marginRight: 10 }} />
+      Stress Level
+    </Typography>
+    <Typography variant="h6" sx={{ color: '#0F52BA', display: 'flex', alignItems: 'baseline', gap: 1 }} fontWeight={700}>
+      {patientData.stressLevel || "-"}
+    </Typography>
+  </VitalItem>
+</VitalInfoBox>
+  <Box sx={{  p: 2 }}>
+  <Grid container spacing={2}>
+    {/* Chief Complaint */}
+    <Grid item xs={12} md={10}>
+      <Typography variant="body1" gutterBottom>
+        Chief Complaint
+      </Typography>
+      <TextField
+        fullWidth
+        multiline
+        rows={1}
+        value={chiefComplaint}
+        onChange={(e) => setChiefComplaint(e.target.value)}
+        sx={{ mb: 3 }}
+      />
+    </Grid>
+
+    {/* Summary Note */}
+    <Grid item xs={12} md={10}>
+      <Typography variant="body1" gutterBottom>
+        Summary Note
+      </Typography>
+      <TextField
+        fullWidth
+        multiline
+        rows={4}
+        placeholder="Enter summary notes here"
+        value={summaryNote}
+        onChange={(e) => setSummaryNote(e.target.value)}
+        sx={{ mb: 3 }}
+      />
+    </Grid>
+
+    {/* Pre-existing Problems */}
+    <Grid item xs={12} md={10}>
+      <Typography variant="body1" gutterBottom>
+        Pre-existing Problems
+      </Typography>
+      <FormControl fullWidth sx={{ mb: 3 }}>
+        <Select
+          multiple
+          value={preExistingProblems}
+          onChange={(e) => setPreExistingProblems(e.target.value)}
+          renderValue={(selected) => (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip
+                  key={value}
+                  label={value}
+                  onDelete={() => handleDeleteProblem(value)}
+                  deleteIcon={
+                    <RiCloseCircleFill
+                      size={20}
+                      style={{ color: "#084480ff" }}
+                    />
+                  }
+                  onMouseDown={(event) => event.stopPropagation()}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    borderRadius: 0,
+                    marginRight: "15px",
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+          displayEmpty
+        >
+          {["Biabties", "Knee Pain", "Asthma", "Diabetes"].map((name) => (
+            <MenuItem key={name} value={name}>
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+
+    {/* Allergy Details */}
+    <Grid item xs={12} md={10}>
+      <Typography variant="body1" gutterBottom>
+        Allergy Details
+      </Typography>
+      <TextField
+        fullWidth
+        multiline
+        rows={2}
+        placeholder="Enter allergy details here"
+        value={allergy}
+        onChange={(e) => setAllergy(e.target.value)}
+        sx={{ mb: 3 }}
+      />
+    </Grid>
+  </Grid>
+</Box>
+
+
+            
+
 
             <Typography variant="h6" gutterBottom>
                 Prescription
             </Typography>
             <Table size="small">
-                <TableHead>
-                    <TableRow sx={{ bgcolor: "#f5f7fa" }}>
-                        <TableCell>Medicine Name</TableCell>
-                        <TableCell>Dosage</TableCell>
-                        <TableCell>Duration</TableCell>
-                        <TableCell>Frequency</TableCell>
-                        <TableCell>Notes</TableCell>
-                        <TableCell>Actions</TableCell>
-                    </TableRow>
-                </TableHead>
+              <TableHead>
+  <TableRow sx={{ bgcolor: "#E7EEF8" }}>
+    <TableCell sx={{ fontWeight: "bold" }}>Medicine Name</TableCell>
+    <TableCell sx={{ fontWeight: "bold" }}>Dosage</TableCell>
+    <TableCell sx={{ fontWeight: "bold" }}>Duration</TableCell>
+    <TableCell sx={{ fontWeight: "bold" }}>Frequency</TableCell>
+    <TableCell sx={{ fontWeight: "bold" }}>Notes</TableCell>
+    <TableCell sx={{ fontWeight: "bold" }} align="center">Actions</TableCell>
+  </TableRow>
+</TableHead>
+
                 <TableBody>
                     {prescriptions.map((med, index) => (
                         <TableRow key={index}>
@@ -366,7 +437,7 @@ const ConsultationTab = ({ patientData }) => {
                                 value={newMedicine.name}
                                 onChange={(e) => setNewMedicine({ ...newMedicine, name: e.target.value })}
                                 variant="outlined"
-                                size="small"
+                              
                             />
                         </TableCell>
                         <TableCell>
@@ -374,7 +445,7 @@ const ConsultationTab = ({ patientData }) => {
                                 value={newMedicine.dosage}
                                 onChange={(e) => setNewMedicine({ ...newMedicine, dosage: e.target.value })}
                                 variant="outlined"
-                                size="small"
+                               
                             />
                         </TableCell>
                         <TableCell>
@@ -382,7 +453,7 @@ const ConsultationTab = ({ patientData }) => {
                                 value={newMedicine.duration}
                                 onChange={(e) => setNewMedicine({ ...newMedicine, duration: e.target.value })}
                                 variant="outlined"
-                                size="small"
+                             
                             />
                         </TableCell>
                         <TableCell>
@@ -390,7 +461,7 @@ const ConsultationTab = ({ patientData }) => {
                                 value={newMedicine.frequency}
                                 onChange={(e) => setNewMedicine({ ...newMedicine, frequency: e.target.value })}
                                 variant="outlined"
-                                size="small"
+                                
                             />
                         </TableCell>
                         <TableCell>
@@ -398,7 +469,7 @@ const ConsultationTab = ({ patientData }) => {
                                 value={newMedicine.notes}
                                 onChange={(e) => setNewMedicine({ ...newMedicine, notes: e.target.value })}
                                 variant="outlined"
-                                size="small"
+                              
                             />
                         </TableCell>
                         <TableCell>
@@ -409,7 +480,7 @@ const ConsultationTab = ({ patientData }) => {
                     </TableRow>
                 </TableBody>
             </Table>
-            <Button variant="outlined" onClick={handleAddMedicine} sx={{ mt: 2 }}>
+            <Button variant="outlined" onClick={handleAddMedicine} sx={{ mt: 2,fontWeight:"bold" }}>
                 Add Medicine
             </Button>
 

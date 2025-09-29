@@ -230,7 +230,7 @@ export default function AppointmentStep1() {
             Back
           </Button>
           <Box display="flex" gap={2}>
-            <Button variant="outlined">Cancel</Button>
+            <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
            <Button
   variant="contained"
   onClick={() =>

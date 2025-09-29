@@ -37,6 +37,9 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { isSameDay, parseISO } from "date-fns";
 import Swal from 'sweetalert2';
 import { useEffect } from "react";
+import { API_URL } from "./config";
+import { deleteAppointmentapi, patientList } from "../service/appointmentService";
+
 
 const rowsPerPage = 10;
 
@@ -47,6 +50,8 @@ export default function PatientsList() {
  const [isdeleted,setIsDeleted]=useState(false);
   // Fetch data from API filtered by selectedDate
  
+  console.log("api",API_URL);
+  
 
   // Filter patients by name or mobile
 
@@ -59,9 +64,12 @@ const navigate=useNavigate();
     const fetchData = async () => {
       try {
         const formattedDate = format(selectedDate, "yyyy-MM-dd");
-        const url = `http://localhost:8000/api/patientList?date=${formattedDate}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const data = await patientList(formattedDate);
+        console.log("receive data", data);
+        
+        // const url = `${API_URL}/patient/patientList?date=${formattedDate}`;
+        // const res = await fetch(url);
+        // const data = await res.json();
         setUserData(data.data);
         setIsDeleted(false);
       } catch (err) {
@@ -82,12 +90,16 @@ const navigate=useNavigate();
   };
   const deleteAppointment = async (id) => {      
       try {
-        const res = await fetch(`http://localhost:8000/api/deleteAppointment/${id}`, 
-          {
-            method: 'DELETE',
-          }
-        );
-        const data = await res.json();
+        // const res = await fetch(`${API_URL}/appointment/deleteAppointment/${id}`, 
+        //   {
+        //     method: 'DELETE',
+        //   }
+        // );
+        // const data = await res.json();
+           const data = await deleteAppointmentapi(id);
+        // console.log("del-data",data);
+        // setIsDeleted(true);
+      
         console.log("del-data",data);
         setIsDeleted(true);
       
@@ -195,7 +207,7 @@ console.log("userdata",userData);
           // maxWidth: 1100,
           mx: "auto",
           p: { xs: 1, md: 3 },
-          borderRadius: 3,
+       
           bgcolor: "#fff",
           boxShadow: 1,
         }}

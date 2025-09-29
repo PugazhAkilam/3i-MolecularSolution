@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Typography, Tabs, Tab, AppBar,Divider  } from '@mui/material';
+import { Box, Typography, Tabs,Grid, Tab, AppBar,Divider  } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PatientDetails from '../components/consultation/PatientDetails';
 import ConsultationTab from '../components/consultation/ConsultationTab';
 import MedicalHistoryTab from '../components/consultation/MedicalHistoryTab';
 import PreviousVisitTab from '../components/consultation/PreviousVisitTab';
 import { useLocation } from 'react-router-dom';
-
+import MedicalHistoryForm from '../components/consultation/MedicalHistoryTab';
 
 const theme = createTheme({
   palette: {
@@ -80,7 +80,12 @@ const Consultant = () => {
     date: '25-Sep-2025',
     time: '10:30 AM',
   };
-
+  function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
   return (
     <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex'}}>
@@ -90,25 +95,101 @@ const Consultant = () => {
     Consultation for Rakshita
   </Typography>
    <Divider sx={{marginBottom: '10px'}}/>
-    <Tabs value={value} onChange={handleChange} sx={{ padding: '0 20px'}} aria-label="consultation tabs">
+    {/* <Tabs value={value} onChange={handleChange} sx={{ padding: '0 20px'}} aria-label="consultation tabs">
       <Tab label="Consultation" {...a11yProps(0)} />
       <Tab label="Medical History" {...a11yProps(1)} />
       <Tab label="Previous Visit" {...a11yProps(2)} />
-    </Tabs>
+    </Tabs> */}
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        aria-label="consultation tabs"
+        // Hide the default indicator
+        TabIndicatorProps={{
+          sx: {
+            display: 'none',
+          },
+        }}
+        sx={{
+          '& .MuiTabs-flexContainer': {
+            // Optional: Adjust spacing between tabs
+            gap: '10px',
+          },
+        }}
+      >
+        <Tab
+          label="Consultation"
+          {...a11yProps(0)}
+          sx={{
+            textTransform: 'none', // Prevent uppercase letters
+            fontWeight: 600,
+            fontSize: '1rem',
+            color: 'text.secondary',
+            '&.Mui-selected': {
+              backgroundColor: '#d6e4f9', // Light blue background for active tab
+              color: '#0d47a1', // Dark blue text for active tab
+             borderTopLeftRadius: "14px" ,
+             borderTopRightRadius: "14px",
+              borderBottom: '4px solid #0d47a1', // Dark blue bottom border
+            },
+          }}
+        />
+        <Tab
+          label="Medical History"
+          {...a11yProps(1)}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: '1rem',
+            color: 'text.secondary',
+            '&.Mui-selected': {
+              backgroundColor: '#d6e4f9',
+              color: '#0d47a1',
+             borderTopLeftRadius: "14px" ,
+             borderTopRightRadius: "14px",
+              borderBottom: '4px solid #0d47a1',
+            },
+          }}
+        />
+        <Tab
+          label="Previous Visit"
+          {...a11yProps(2)}
+          sx={{
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: '1rem',
+            color: 'text.secondary',
+            '&.Mui-selected': {
+              backgroundColor: '#d6e4f9',
+              color: '#0d47a1',
+       borderTopLeftRadius: "14px" ,
+             borderTopRightRadius: "14px",
+              borderBottom: '4px solid #0d47a1',
+            },
+          }}
+        />
+      </Tabs>
 </Box>
 
           <Box sx={{ display: 'flex', flexGrow: 1 }}>
+            <Grid xs={12} sm = {9}>
+
+            
             <TabPanel value={value} index={0}>
               <ConsultationTab patientData={patientData} />
             </TabPanel>
+            </Grid>
+
             <TabPanel value={value} index={1}>
-              <MedicalHistoryTab patientData={patientData}  />
+              {/* <MedicalHistoryTab patientData={patientData}  /> */}
+              <MedicalHistoryForm patientData={patientData} />
             </TabPanel>
             <TabPanel value={value} index={2}>
               <PreviousVisitTab patientData={patientData} />
             </TabPanel>
-
+<Grid xs={12} sm = {3}>
             <PatientDetails patientData={patientData} appointmentData={appointmentData} />
+</Grid>
           </Box>
         </Box>
         </Box>

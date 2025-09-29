@@ -19,8 +19,9 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { RiCloseCircleFill } from "react-icons/ri";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import VisitHistoryTable from './visitHis/VisitHistoryTable';
+import { API_URL } from "./config";
 
 
 export default function VisitorHistoryId() {
@@ -28,9 +29,10 @@ export default function VisitorHistoryId() {
   const [patient, setPatient] = useState([]);
   const [appointment, setAppointment] = useState({});
   const location = useLocation();
+  const navigate=useNavigate();
   const patientData = location.state || {};
   console.log("patientData", patientData);
-          console.log("patId", patientData.regId);
+  console.log("patId", patientData.regId);
   console.log("patient",patient);
   
   // console.log("visitor appointment",data);
@@ -48,13 +50,13 @@ export default function VisitorHistoryId() {
       // setData(selectedPatientData.data);
 
       // Fetch patient details
-      const patientDetailsRes = await fetch(`http://localhost:8000/api/patient/patientDetails/${patientData.regId}`);
+      const patientDetailsRes = await fetch(`${API_URL}/patient/patientDetails/${patientData.regId}`);
       const patientDetailsData = await patientDetailsRes.json();
       console.log("res-data patientDetails", patientDetailsData.data);
       setPatient(patientDetailsData.data);
 
       // Fetch appointment details
-      const appointmentRes = await fetch(`http://localhost:8000/api/appointment/appointmentDetails/${patientData.regId}`);
+      const appointmentRes = await fetch(`${API_URL}/appointment/appointmentDetails/${patientData.regId}`);
       const appointmentData = await appointmentRes.json();
       console.log("res-data appointmentDetails", appointmentData.data);
       setAppointment(appointmentData.data);
@@ -258,7 +260,7 @@ console.log("appointment",appointment);
                  <Button variant="outlined" onClick={() => navigate(-1)}>
                    Back
                  </Button>
-                 <Box display="flex" gap={2}>
+                 {/* <Box display="flex" gap={2}>
                    <Button variant="outlined">Cancel</Button>
                   <Button
          variant="contained"
@@ -266,7 +268,7 @@ console.log("appointment",appointment);
          Continue
        </Button>
        
-                 </Box>
+                 </Box> */}
                </Box>
       </Paper>
     </Box>

@@ -505,9 +505,7 @@ sx={{
             Back
           </Button>
           <Box sx={{ display: "flex", gap: 2 }}>
-            <Button variant="outlined" sx={{ textTransform: "none", color: "text.primary" }}>
-              Cancel
-            </Button>
+             <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
            <Button
         variant="contained"
         color="primary"

@@ -28,7 +28,7 @@ import { getRegisteredPatients } from '../service/patientService'; // adjust pat
 import { getAppointmentsWithPatientDetails } from '../service/appointmentService'; // adjust path as needed
 import { formatDate } from '../utils/formatDate';
 
-const DOCTORS = ["Dr. Meera", "Dr. Ram", "Dr. Vikram"];
+const DOCTORS = ["Dr.Ram", "Dr.Kumar", "Dr.Nitin"];
 
 export default function VisitorHistory() {
   const [patientRows, setPatientRows] = useState([]);
@@ -64,7 +64,7 @@ export default function VisitorHistory() {
   });
 
   return (
-    <Box sx={{ bgcolor: "#f7fafd", minHeight: "100vh", py: 4 }}>
+    <Box p={3} sx={{ bgcolor: "#fff", minHeight: "100vh", py: 4 }}>
       <Typography variant="h5" fontWeight="bold" mb={1}>
         Visitor History
       </Typography>

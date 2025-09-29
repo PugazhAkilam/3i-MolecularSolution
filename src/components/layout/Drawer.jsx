@@ -6,8 +6,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getMenuItems } from './MenuItems';
 import { useState } from 'react';
 import  logo from '../../assets/logo2.png';
+import Swal from 'sweetalert2';
+import { API_URL } from '../config';
 
-const SideDrawer = ({ handleLogout, isDarkMode, isMobile, setMobileOpen,user,loading }) => {
+
+const SideDrawer = ({ isDarkMode, isMobile, setMobileOpen,user,loading }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const menuItems = getMenuItems(user,loading);
@@ -22,6 +25,33 @@ const SideDrawer = ({ handleLogout, isDarkMode, isMobile, setMobileOpen,user,loa
     }
   };
 
+  const handleLogout = async () => {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out of your account!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, logout!'
+      });
+  
+      if (result.isConfirmed) {
+        // try {
+        //   await fetch(`${API_URL}/auth/logout`, {
+        //     method: 'POST',
+        //     credentials: 'include'
+        //   });
+        //   Swal.fire('Logged Out!', 'You have been successfully logged out.', 'success');
+        //   navigate('/login');
+        // } catch (err) {
+        //   console.error('Logout error:', err);
+        //   Swal.fire('Error!', 'Failed to logout. Please try again.', 'error');
+        // }       
+         localStorage.removeItem("userData");
+         navigate('/login');
+      }
+    };
   return (
     <Box sx={{       backgroundColor:"#F8F9FE",backdropFilter: 'blur(10px)'}} >
      

@@ -90,7 +90,7 @@ function CalendarGrid({ month, activeDays, arrow, align }) {
                   fontWeight: "600",
                   fontSize: 14,
                 }}>
-                {i + 1}
+                {i + 1} 
               </Button>
             </Grid>
           ))}

@@ -18,6 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_URL } from "./config";
 
 // A utility function to calculate age, to keep the main component clean
 const calculateAge = (dob) => {
@@ -99,7 +100,7 @@ export default function NewPatientRegistration() {
                 const regId = locationState.regId;
                 try {
                     // This is the missing API call to get patient details
-                    const res = await fetch(`http://localhost:8000/api/patient/getPatientDetails/${regId}`);
+                    const res = await fetch(`${API_URL}/patient/getPatientDetails/${regId}`);
                     const data = await res.json();
                     if (res.ok) {
                         setPatientId(data.patientId);
@@ -122,7 +123,7 @@ export default function NewPatientRegistration() {
             } else {
                 // Fetch next available patient ID for new patient mode
                 try {
-                    const res = await fetch('http://localhost:8000/api/patient/getNextPatientId');
+                    const res = await fetch(`${API_URL}/patient/getNextPatientId`);
                     const data = await res.json();
                     if (res.ok) {
                         setPatientId(data.nextPatientId);
@@ -159,10 +160,10 @@ export default function NewPatientRegistration() {
         let method;
         
         if (isEditMode) {
-            apiUrl = `http://localhost:8000/api/patient/updatePatient/${patientId}`;
+            apiUrl = `${API_URL}/patient/updatePatient/${patientId}`;
             method = "PUT";
         } else {
-            apiUrl = 'http://localhost:8000/api/patient/newPatientRegistration';
+            apiUrl = `${API_URL}/patient/newPatientRegistration`;
             method = "POST";
             patientData.regId = patientId; // Add regId for new patient
         }
@@ -211,7 +212,7 @@ export default function NewPatientRegistration() {
             <Box sx={{
                 mx: "auto",
                 p: { xs: 1, md: 3 },
-                borderRadius: 3,
+            
                 bgcolor: "#fff",
                 boxShadow: 1,
             }}>
@@ -318,7 +319,7 @@ export default function NewPatientRegistration() {
                     </Grid>
 
                     <Box display="flex" justifyContent="flex-end" gap={2}>
-                        <Button variant="outlined" color="primary">Cancel</Button>
+                        <Button variant="outlined" color="primary" onClick={()=>navigate(-1)}>Cancel</Button>
                         <Button variant="contained" color="primary" onClick={handleSave}>
                             {isEditMode ? "Update" : "Save & Register"}
                         </Button>
