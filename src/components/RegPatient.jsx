@@ -158,7 +158,7 @@ export default function RegisteredPatients() {
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ bgcolor: "#E7EEF8" }}>
                 <TableCell>Reg ID</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Mobile</TableCell>

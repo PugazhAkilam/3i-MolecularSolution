@@ -25,7 +25,7 @@ const VisitHistoryTable = ({ regId }) => {
     <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
       <Table>
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ bgcolor: "#E7EEF8" }}>
             <TableCell>Visited Date</TableCell>
             <TableCell>Respiratory Rate</TableCell>
             <TableCell>BP Reading</TableCell>

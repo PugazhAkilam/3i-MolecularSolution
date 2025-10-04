@@ -305,7 +305,7 @@ console.log("userdata",userData);
         <TableContainer component={Paper} sx={{ boxShadow: 0 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ bgcolor: "#f5f7fa" }}>
+              <TableRow sx={{ bgcolor: "#E7EEF8" }}>
                 {/* ... table headers unchanged */}
                 <TableCell sx={{ fontWeight: 600 }}>Reg ID</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>

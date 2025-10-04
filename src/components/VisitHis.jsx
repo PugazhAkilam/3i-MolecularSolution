@@ -145,7 +145,7 @@ export default function VisitorHistory() {
       <TableContainer component={Paper} sx={{ boxShadow: 0 }}>
         <Table>
           <TableHead>
-            <TableRow sx={{ bgcolor: "#cfe0faff" }}>
+            <TableRow sx={{ bgcolor: "#E7EEF8" }}>
               <TableCell sx={{ fontWeight: 600 }}>Reg ID</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Mobile</TableCell>
