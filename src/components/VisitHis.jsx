@@ -27,6 +27,14 @@ import { useNavigate } from "react-router-dom";
 import { getRegisteredPatients } from '../service/patientService'; // adjust path as needed
 import { getAppointmentsWithPatientDetails } from '../service/appointmentService'; // adjust path as needed
 import { formatDate } from '../utils/formatDate';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+import { isSameDay } from 'date-fns';
+
 
 const DOCTORS = ["Dr.Ram", "Dr.Kumar", "Dr.Nitin"];
 
@@ -34,7 +42,7 @@ export default function VisitorHistory() {
   const [patientRows, setPatientRows] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const navigate = useNavigate();
 
   // Fetch data from API when component mounts
@@ -54,6 +62,7 @@ export default function VisitorHistory() {
 
   // Filter rows based on search, doctor, and date
   const filteredRows = patientRows.filter((row) => {
+    console.log("date", row.date);
     
     const matchesSearch =
       !search ||                                  
@@ -61,7 +70,10 @@ export default function VisitorHistory() {
       row.lastName?.toLowerCase().includes(search.toLowerCase())  ||
       row.mobile?.includes(search);
     const matchesDoctor = !selectedDoctor || row.doctor === selectedDoctor;
-    const matchesDate = !selectedDate || row.date === selectedDate;
+const matchesDate =
+  !selectedDate ||
+  (row.date && isSameDay(new Date(row.date), new Date(selectedDate)));
+
     return matchesSearch && matchesDoctor && matchesDate;
   });
 
@@ -96,50 +108,72 @@ export default function VisitorHistory() {
           sx={{ width: { xs: "100%", sm: 330 } }}
         />
 
-        <Box display="flex" gap={2}>
-          <Button
-            variant="outlined"
-            sx={{
-              borderColor: "#d1d5db",
-              borderRadius: 2,
-              textTransform: "none",
-              color: "text.primary",
-              px: 2,
-              py: 1,
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              width: { xs: "100%", sm: "auto" },
+        <Box display="flex" gap={2} alignItems="center">
+  <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <DatePicker
+      slotProps={{
+              textField: {
+                size: 'small',
+                sx: { minWidth: 140 },
+              },
             }}
-            startIcon={<CalendarTodayIcon sx={{ color: "text.secondary" }} />}
-            endIcon={<ArrowDropDownIcon sx={{ color: "text.secondary" }} />}
-          >
-            Select Date
-          </Button>
-          <Select
-            size="small"
-            value={selectedDoctor}
-            onChange={(e) => setSelectedDoctor(e.target.value)}
-            displayEmpty
-            sx={{
-              minWidth: 110,
-              borderRadius: 2,
-              bgcolor: "#fff",
-              borderColor: "#eee",
-              color: "#222",
-              ".MuiSelect-icon": { color: "#888" },
-            }}
-            IconComponent={ArrowDropDownIcon}
-            renderValue={(selected) => (selected ? selected : "Doctor")}
-          >
-            <MenuItem value="">Doctor</MenuItem>
-            {DOCTORS.map((doc) => (
-              <MenuItem value={doc} key={doc}>
-                {doc}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
+      value={selectedDate}
+      onChange={(newValue) => setSelectedDate(newValue)}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          size="small"
+          placeholder="Select Date"
+          sx={{
+            minWidth: 160,
+           
+          }}
+         
+        />
+      )}
+    />
+  </LocalizationProvider>
+
+  <Select
+    size="small"
+    value={selectedDoctor}
+    onChange={(e) => setSelectedDoctor(e.target.value)}
+    displayEmpty
+    IconComponent={ArrowDropDownIcon}
+    renderValue={(selected) => (selected ? selected : "Doctor")}
+    sx={{
+      minWidth: 110,
+      height: 36,
+      fontSize: '0.85rem',
+      borderRadius: 2,
+      bgcolor: "#fff",
+      color: "#222",
+      '& .MuiSelect-select': {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '6px 8px',
+      },
+      '& .MuiOutlinedInput-root': {
+        height: 36,
+        borderRadius: 2,
+        fontSize: '0.85rem',
+      },
+      '& .MuiSvgIcon-root': {
+        fontSize: 20,
+        color: '#888',
+      },
+    }}
+  >
+    <MenuItem value="">Doctor</MenuItem>
+    {DOCTORS.map((doc) => (
+      <MenuItem value={doc} key={doc}>
+        {doc}
+      </MenuItem>
+    ))}
+  </Select>
+</Box>
+
       </Box>
 
       <TableContainer component={Paper} sx={{ boxShadow: 0 }}>
