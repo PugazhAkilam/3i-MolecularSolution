@@ -22,7 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 // import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { RiCloseCircleFill } from "react-icons/ri";
-import { API_URL } from '../config';
+import { API_URL} from '../config';
 import { LuActivity } from "react-icons/lu";
 import { FaHeartbeat } from "react-icons/fa";
 import { FaLungs } from "react-icons/fa";
@@ -426,7 +426,7 @@ const ConsultationTab = ({ patientData }) => {
                             <TableCell>{med.notes}</TableCell>
                             <TableCell>
                                 <IconButton onClick={() => handleDeleteMedicine(index)} size="small">
-                                    <DeleteIcon color="error" />
+                                    <DeleteIcon color="primary" />
                                 </IconButton>
                             </TableCell>
                         </TableRow>
