@@ -22,6 +22,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useLocation, useNavigate } from 'react-router-dom';
 import VisitHistoryTable from './visitHis/VisitHistoryTable';
 import { API_URL } from "./config";
+import PreviousVisitTab from './consultation/PreviousVisitTab';
 
 
 export default function VisitorHistoryId() {
@@ -201,7 +202,8 @@ console.log("appointment",appointment);
         Visit History
       </Typography>
 
-      <VisitHistoryTable regId={patientData.regId} />
+      {/* <VisitHistoryTable regId={patientData.regId} /> */}
+      <PreviousVisitTab patientData={patientData} />
       {/* <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
         <Table>
           <TableHead>

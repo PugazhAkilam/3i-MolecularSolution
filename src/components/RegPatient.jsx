@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -33,6 +33,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
+import PaginationControls from './Pagination/PaginatedControls';
+
 export default function RegisteredPatients() {
   const [data, setData] = React.useState([]);
   const [filteredData, setFilteredData] = React.useState([]);
@@ -40,6 +42,15 @@ export default function RegisteredPatients() {
   const [dateFilter, setDateFilter] = React.useState(null); // use Dayjs object
   const [doctorFilter, setDoctorFilter] = React.useState('');
   const navigate = useNavigate();
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const rowsPerPage = 10;
+
+  const totalCount = filteredData.length;
+  const start = (currentPage - 1) * rowsPerPage + 1;
+  const end = Math.min(currentPage * rowsPerPage, totalCount);
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const paginatedRows = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   useEffect(() => {
     const fetchRegisteredPatients = async () => {
@@ -55,7 +66,7 @@ export default function RegisteredPatients() {
 
   useEffect(() => {
     let filtered = [...data];
-
+    setCurrentPage(1)
     if (search) {
       const lower = search.toLowerCase();
       filtered = filtered.filter(
@@ -136,7 +147,13 @@ export default function RegisteredPatients() {
               textField: {
                 size: 'small',
                 sx: { minWidth: 140 },
+
               },
+              openPickerIcon: {
+        sx: {
+          color: 'primary.main', // ✅ change to any MUI color or hex value
+        },
+      },
             }}
             format="YYYY-MM-DD"
             clearable
@@ -169,7 +186,7 @@ export default function RegisteredPatients() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData && filteredData.map((row, i) => (
+              {paginatedRows && paginatedRows.map((row, i) => (
                 <TableRow key={i}>
                   <TableCell>
                     <Link  color="primary" fontWeight={600} sx={{cursor: 'pointer'}} onClick={() => navigate(`/admin/VisitPatientId`, {
@@ -210,19 +227,30 @@ export default function RegisteredPatients() {
               ))}
             </TableBody>
           </Table>
-          <Box display="flex" justifyContent="space-between" p={2}>
+          {/* <Box display="flex" justifyContent="space-between" p={2}>
             <Typography variant="body2">
-              Showing 1 to 10 of 5565 patients
+              Showing {start} to {end} of {totalCount} patients
             </Typography>
             <Box>
-              <Button variant="outlined" size="small" sx={{ mr: 1 }}>
+              <Button variant="outlined" size="small" sx={{ mr: 1 }} 
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled = {currentPage === 1}
+              >
                 Prev
               </Button>
-              <Button variant="outlined" size="small">
+              <Button variant="outlined" size="small"
+             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+             disabled={currentPage === totalPages}>
                 Next
               </Button>
             </Box>
-          </Box>
+          </Box> */}
+           <PaginationControls
+  currentPage={currentPage}
+  totalCount={filteredData.length}
+  rowsPerPage={rowsPerPage}
+  onPageChange={setCurrentPage}
+/>
         </TableContainer>
       </Box>
     </LocalizationProvider>

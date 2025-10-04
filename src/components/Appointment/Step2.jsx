@@ -183,19 +183,34 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
       exclusive
       onChange={handleChange}
       aria-label="capture mode"
-      sx={{ mb: 4 }}
-    >
+      size="small"
+ sx={{
+      bgcolor: '#EEEEEE', // light gray background for the group
+      borderRadius: '5px',
+      p: 0.5,
+      ".MuiToggleButton-root": {
+        border: "none",
+        borderRadius: '5px',
+        px: 2,
+        color: "text.secondary",  
+        backgroundColor: 'transparent',
+        "&:hover": {
+          backgroundColor: "#c0c0c0",
+        }
+      },
+      ".MuiToggleButton-root.Mui-selected": {
+        backgroundColor: "#ffffff", // selected button bg white
+        color: "#000000",           // selected button text color
+        fontWeight: "bold",
+      },
+      ".MuiToggleButton-root:not(:last-of-type)": {
+        marginRight: '4px', // add spacing between buttons
+      }
+    }}    >
       <ToggleButton 
   value="now"
   aria-label="capture now"
-  sx={{
-    bgcolor: captureMode === "now" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "now" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "now" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
+  
 >
   Capture Now
 </ToggleButton>
@@ -204,14 +219,7 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
       <ToggleButton
         value="later"
         aria-label="capture later"
-sx={{
-    bgcolor: captureMode === "later" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "later" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "later" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
+
       >
         Capture Later
       </ToggleButton>
