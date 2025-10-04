@@ -54,9 +54,11 @@ export default function VisitorHistory() {
 
   // Filter rows based on search, doctor, and date
   const filteredRows = patientRows.filter((row) => {
+    
     const matchesSearch =
-      !search ||
-      row.name?.toLowerCase().includes(search.toLowerCase()) ||
+      !search ||                                  
+      row.firstName?.toLowerCase().includes(search.toLowerCase()) || 
+      row.lastName?.toLowerCase().includes(search.toLowerCase())  ||
       row.mobile?.includes(search);
     const matchesDoctor = !selectedDoctor || row.doctor === selectedDoctor;
     const matchesDate = !selectedDate || row.date === selectedDate;
@@ -159,7 +161,7 @@ export default function VisitorHistory() {
                                  <Link  color="primary" fontWeight={600} sx={{cursor: 'pointer'}} onClick={() => navigate(`/admin/VisitPatientId`, {
                                   state: {
               regId: row.patientId,
-              name: row.firstName+" "+row.lastName,
+              name: row.firstName + " " + row.lastName,
               mobile: row.mobile,
               age: row.age,
              }
