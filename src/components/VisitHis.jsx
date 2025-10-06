@@ -92,13 +92,13 @@ const matchesDate =
   });
 
   return (
-    <Box p={3} sx={{ bgcolor: "#fff", minHeight: "100vh", py: 4 }}>
+    <Box p={3} sx={{ bgcolor: "#fff", minHeight: "100vh" }}>
       <Typography variant="h5" fontWeight="bold" mb={1}>
         Visitor History
       </Typography>
-      <Typography variant="h6" fontWeight="bold" mb={2}>
-        Patients List
-      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+               Patients List
+             </Typography>
       <Box
         display="flex"
         flexWrap="wrap"
@@ -125,6 +125,7 @@ const matchesDate =
         <Box display="flex" gap={2} alignItems="center">
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <DatePicker
+    label="Date"
       slotProps={{
               textField: {
                 size: 'small',
@@ -162,10 +163,9 @@ const matchesDate =
     IconComponent={ArrowDropDownIcon}
     renderValue={(selected) => (selected ? selected : "Doctor")}
     sx={{
-      minWidth: 110,
-      height: 36,
-      fontSize: '0.85rem',
-      borderRadius: 2,
+      minWidth: 120,
+       height: 38,
+    
       bgcolor: "#fff",
       color: "#222",
       '& .MuiSelect-select': {

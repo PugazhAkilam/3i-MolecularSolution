@@ -15,31 +15,35 @@ import { API_URL } from '../config';
 import { formatDate } from '../../utils/formatDate';
 
 const PreviousVisitTab = ({patientData}) => {
-  const visitData = {
-    visitedDate: '02-Feb-2025',
-    chiefComplaint: 'Cold and Cough for past 3 days',
-    prescription: [
-      { name: 'Paracetamol', dosage: '500mg', duration: '3 days', frequency: 'TDS', notes: 'After meals' },
-      { name: 'Cough Syrup', dosage: '10ml', duration: '5 days', frequency: 'BD', notes: 'As needed' },
-    ],
-    vital: {
-      bloodPressure: '120/80',
-      heartRate: '75 bpm',
-      pulse: '72 bpm',
-      stressLevel: 'Low',
-    },
-  };
-      const [loading, setLoading] = useState(true);
+  // const visitData = {
+  //   visitedDate: '02-Feb-2025',
+  //   chiefComplaint: 'Cold and Cough for past 3 days',
+  //   prescription: [
+  //     { name: 'Paracetamol', dosage: '500mg', duration: '3 days', frequency: 'TDS', notes: 'After meals' },
+  //     { name: 'Cough Syrup', dosage: '10ml', duration: '5 days', frequency: 'BD', notes: 'As needed' },
+  //   ],
+  //   vital: {
+  //     bloodPressure: '120/80',
+  //     heartRate: '75 bpm',
+  //     pulse: '72 bpm',
+  //     stressLevel: 'Low',
+  //   },
+  // };
+     console.log("paditendata",patientData);
+       const[loading,setLoading]=useState(true)
       const [prescriptions, setPrescriptions] = useState([]);
         const [error, setError] = useState(null);
   useEffect(() => {
         const fetchMedicalHistory = async () => {
-            if (!patientData || !patientData.patientId) {
+            if (!patientData ) {
+              console.log("efrwe");
+              
                 setLoading(false);
                 return;
             }
             try {
-                const response = await fetch(`${API_URL}/appointment/visitDetails2/${patientData.patientId}`);
+              const id=patientData.patientId || patientData.regId
+                const response = await fetch(`${API_URL}/appointment/visitDetails2/${id}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch medical history');
                 }
@@ -60,7 +64,7 @@ const PreviousVisitTab = ({patientData}) => {
         };
 
         fetchMedicalHistory();
-    }, [patientData]);
+    }, []);
 
     console.log("prescription", prescriptions);
     
@@ -163,7 +167,7 @@ const PreviousVisitTab = ({patientData}) => {
   ))}
        
 
-                     
+               
   
     
       {/* <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>

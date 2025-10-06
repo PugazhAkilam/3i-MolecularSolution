@@ -14,6 +14,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { getPatientDetails } from '../../service/patientService';
+import { getAppointmentDetails } from '../../service/appointmentService';
+import { formatDate } from "../../utils/formatDate";
+import { formatTimeSlot } from "../../utils/formatTime";
 
 const TIME_SLOTS = {
   morning: ["9 am", "10 am", "11 am", "12 am"],
@@ -28,47 +32,61 @@ export default function AppointmentStep1() {
   const [date, setDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState("10 am");
   const [selectedDoctor, setSelectedDoctor] = useState(DOCTORS[0]);
-  const [patient, setPatient] = useState({
-    regId: '',
-    name: '',
-    mobile: '',
-    age: '',
-    patient:null
-  });
+  const [patient, setPatient] = useState(null);
+    const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();
  const location = useLocation();
   const patientData = location.state || {};
-  console.log("pat",patientData);
+  console.log("patdata",patientData);
+   console.log("pat",patient);
+   
   
-  // Load the last registered patient from localStorage
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("patientsData")) || [];
-    if (stored.length > 0) {
-      setPatient(stored[stored.length - 1]); // get latest patient
-    }
-  }, []);
- useEffect(() => {
-    if (patientData.regId) {
-      setPatient({
-        regId: patientData.regId,
-        name: patientData.name,
-        mobile: patientData.mobile,
-        age: patientData.age,
-    
-      });
-    }
-  }, [patientData]);
+    useEffect(() => {
+      async function fetchPatientDetails() {
+        if (patientData.regId) {
+          try {
+            const data = await getPatientDetails(patientData.regId);
+            setPatient(Array.isArray(data.data) ? data.data[0] : data.data);
+          } catch (err) {
+            console.error('Failed to fetch patient details', err);
+          }
+        }
+      }
+      fetchPatientDetails();
+    }, [patientData.regId]);
+
+      useEffect(() => {
+        async function fetchAppointmentDetails() {
+          if (patientData.action === 'edit' && patientData.data && patientData.data.appointmentId) {
+            setEditMode(true);
+            try {
+              const appointment = await getAppointmentDetails(patientData.data.patientId);
+              if (appointment) {
+                console.log("loapp",appointment);
+                
+             setSelectedTime(appointment.time ? formatTimeSlot(appointment.time) : "10 am");
+                setSelectedDoctor(appointment.doctor || DOCTORS[0]);
+                setDate(appointment.date ? new Date(appointment.date) : new Date());
+              }
+            } catch (err) {
+              console.error('Failed to fetch appointment details', err);
+            }
+          }
+        }
+        fetchAppointmentDetails();
+      }, [patientData]);
+ 
 
   return (
-    <Card sx={{ width: "100%", borderRadius: 3, my: 4 }}>
+    <Card sx={{ width: "100%", borderRadius: 2 }}>
       <CardContent>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
+        {/* <Typography variant="h4" fontWeight="bold" gutterBottom>
           Appointment
-        </Typography>
+        </Typography> */}
 
         <Box borderRadius={2} p={1}>
           <Typography variant="h6" fontWeight="600" mb={1}>
-            Add an appointment{" "}
+           {editMode ? 'Update' : 'Add'} an appointment{" "}
             <Typography component="span" variant="body2" color="text.secondary">
               (Step 1 of 3)
             </Typography>
@@ -76,26 +94,22 @@ export default function AppointmentStep1() {
 
           {/* Patient Info from localStorage */}
           <Typography color="text.secondary" mb={3}>
-            {patient ? (
-              <>
-                
-                <b>
-                                 
-              Patient Id: {patient.regId} |   {patient.name} 
-                </b>{" "}
-                | Mob: {patient.mobile} | Age:{" "}
-                {patient.age
-                 }
-              </>
-            ) : (
-              "No patient data found"
-            )}
+              {patient ? (
+                <>
+                  <b>
+                    Patient Id: {patient.patientId} | {patient.firstName} {patient.lastName}
+                  </b>{" "}
+                  | Mob: {patient.mobile} | Age: {patient.age}
+                </>
+              ) : (
+                "No patient data found"
+              )}
           </Typography>
 
           <Divider sx = {{ my: 2 }} />
 
           {/* Doctor select */}
-          <Box mt={4} width={200}>
+          <Box mt={4} width={230}>
             <select
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -202,11 +216,8 @@ export default function AppointmentStep1() {
               <Grid item xs={12}>
                 <Typography>
                   <strong>Date:</strong>{" "}
-                  {date.toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  
+                  {formatDate(date)}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -235,11 +246,16 @@ export default function AppointmentStep1() {
   variant="contained"
   onClick={() =>
     navigate("/admin/appointment-step2", {
-      state: { date, selectedTime, selectedDoctor, patient, edit:'new' },
+      state: { date,
+         selectedTime, 
+         selectedDoctor,
+          patient, 
+          appointmentId: patientData.data ? patientData.data.appointmentId : null,
+          action: editMode ? 'edit' : 'new' },
     })
   }
 >
-  Continue
+  {editMode ? 'Update & Continue' : 'Continue'}
 </Button>
 
           </Box>

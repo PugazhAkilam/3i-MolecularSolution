@@ -86,7 +86,7 @@ const filteredPatients = search
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ bgcolor: "#E7EEF8" }}>
               <TableCell>Patient ID</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Mobile</TableCell>

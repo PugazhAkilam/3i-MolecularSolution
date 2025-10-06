@@ -15,6 +15,11 @@ export const deletePatient = async (patientId) => {
     return data;
 };
 
+export const getPatientDetails = async (regId) => {
+  const res = await api.get(`/patient/patientDetails/${regId}`);
+  return res.data;
+};
+
 // export const getPatientsStats = async () => {
 //   try {
 //     const res = await api.get('/patient/dashboard/patients-stats');
