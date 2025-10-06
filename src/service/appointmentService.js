@@ -46,3 +46,22 @@ export const getTodaysAppointmentapi = async () => {
   }
 };
 
+export const getAppointmentDetails = async (patientId) => {
+  try {
+    const response = await api.get(`/appointment/appointmentDetails/${patientId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching appointment details:', error);
+    throw error;
+  }
+};
+
+export const getAppointment= async (appointmentId) => {
+  try {
+    const response = await api.get(`/appointment/getappointment/${appointmentId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching appointment details:', error);
+    throw error;
+  }
+};

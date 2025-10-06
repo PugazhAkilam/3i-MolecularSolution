@@ -124,12 +124,20 @@ export default function RegisteredPatients() {
         <Typography variant="subtitle1" gutterBottom>
           Patients List
         </Typography>
-        <Box display="flex" alignItems="center" gap={2} mb={2}>
+      <Box
+            display="flex"
+            flexWrap="wrap"
+            alignItems="center"
+            gap={2}
+            justifyContent="space-between"
+            mb={1.5}
+          >
           <TextField
             size="small"
             placeholder="Search by name or mobile number"
             variant="outlined"
             value={search}
+              sx={{ width: { xs: "100%", sm: 330 } }}
             onChange={e => setSearch(e.target.value)}
             InputProps={{
               startAdornment: (
@@ -138,7 +146,7 @@ export default function RegisteredPatients() {
                 </InputAdornment>
               ),
             }}
-          />
+          />    <Box display="flex" gap={2} alignItems="center">
           <DatePicker
             label="Date"
             value={dateFilter}
@@ -170,19 +178,20 @@ export default function RegisteredPatients() {
             <MenuItem value='Dr.Nitin'>Dr.Nitin</MenuItem>
             <MenuItem value='Dr.Ram'>Dr.Ram</MenuItem>
             <MenuItem value='Dr.Kumar'>Dr.Kumar</MenuItem>
-          </TextField>
+          </TextField> 
+          </Box>
         </Box>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper}  sx={{ boxShadow: 0 }}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Reg ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Mobile</TableCell>
-                <TableCell>Age</TableCell>
-                <TableCell>Visited Doctor</TableCell>
-                <TableCell>Visited Date</TableCell>
-                <TableCell>Action</TableCell>
+         <TableRow sx={{ bgcolor: "#E7EEF8" }}>
+                <TableCell sx={{ fontWeight: 600 }}>Reg ID</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Mobile</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Age</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}> Visited Doctor</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Visited Date</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -217,7 +226,7 @@ export default function RegisteredPatients() {
       mobile: row.mobile,
       age: row.age,
     }
-                    })}><FaCalendarPlus size={20} />
+                    })}><FaCalendarPlus />
                     </IconButton>
                      <IconButton color="primary" onClick={() => handleDelete(row.reg_patientId)}>
                                             <RiCloseCircleFill />

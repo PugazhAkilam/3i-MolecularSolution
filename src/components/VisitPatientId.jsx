@@ -44,11 +44,7 @@ export default function VisitorHistoryId() {
     try {
       console.log("patId", patientData.regId);
 
-      // // Fetch selected patient
-      // const selectedPatientRes = await fetch(`http://localhost:8000/api/selectedPatient/${patientData.regId}`);
-      // const selectedPatientData = await selectedPatientRes.json();
-      // console.log("res-data selectedPatient", selectedPatientData.data);
-      // setData(selectedPatientData.data);
+     
 
       // Fetch patient details
       const patientDetailsRes = await fetch(`${API_URL}/patient/patientDetails/${patientData.regId}`);
