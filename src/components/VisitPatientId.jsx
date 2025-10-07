@@ -44,11 +44,7 @@ export default function VisitorHistoryId() {
     try {
       console.log("patId", patientData.regId);
 
-      // // Fetch selected patient
-      // const selectedPatientRes = await fetch(`http://localhost:8000/api/selectedPatient/${patientData.regId}`);
-      // const selectedPatientData = await selectedPatientRes.json();
-      // console.log("res-data selectedPatient", selectedPatientData.data);
-      // setData(selectedPatientData.data);
+     
 
       // Fetch patient details
       const patientDetailsRes = await fetch(`${API_URL}/patient/patientDetails/${patientData.regId}`);
@@ -154,7 +150,9 @@ console.log("appointment",appointment);
       <Typography variant="h6" fontWeight={500} mb={2}>
         Visit History
       </Typography>
- <PreviousVisitTab patientData={patientData} />
+
+      {/* <VisitHistoryTable regId={patientData.regId} /> */}
+      <PreviousVisitTab patientData={patientData} />
       {/* <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
         <Table>
           <TableHead>

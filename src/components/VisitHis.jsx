@@ -34,6 +34,8 @@ import dayjs from 'dayjs';
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 import { isSameDay } from 'date-fns';
+import PaginationControls from './Pagination/PaginatedControls';
+
 
 
 const DOCTORS = ["Dr.Ram", "Dr.Kumar", "Dr.Nitin"];
@@ -44,6 +46,16 @@ export default function VisitorHistory() {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const navigate = useNavigate();
+
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const rowsPerPage = 10;
+
+  const totalCount = patientRows.length;
+  const start = (currentPage - 1) * rowsPerPage + 1;
+  const end = Math.min(currentPage * rowsPerPage, totalCount);
+
+  const totalPages = Math.ceil(patientRows.length / rowsPerPage);
+  const paginatedRows = patientRows.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   // Fetch data from API when component mounts
   
@@ -60,10 +72,12 @@ export default function VisitorHistory() {
     }, []);
   
 
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [ search, selectedDoctor, selectedDate])
   // Filter rows based on search, doctor, and date
   const filteredRows = patientRows.filter((row) => {
-    console.log("date", row.date);
-    
+
     const matchesSearch =
       !search ||                                  
       row.firstName?.toLowerCase().includes(search.toLowerCase()) || 
@@ -78,13 +92,13 @@ const matchesDate =
   });
 
   return (
-    <Box p={3} sx={{ bgcolor: "#fff", minHeight: "100vh", py: 4 }}>
+    <Box p={3} sx={{ bgcolor: "#fff", minHeight: "100vh" }}>
       <Typography variant="h5" fontWeight="bold" mb={1}>
         Visitor History
       </Typography>
-     <Typography variant="subtitle1" gutterBottom>
-        Patients List
-      </Typography>
+      <Typography variant="subtitle1" gutterBottom>
+               Patients List
+             </Typography>
       <Box
         display="flex"
         flexWrap="wrap"
@@ -111,12 +125,17 @@ const matchesDate =
         <Box display="flex" gap={2} alignItems="center">
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <DatePicker
-     label="Date"
+    label="Date"
       slotProps={{
               textField: {
                 size: 'small',
                 sx: { minWidth: 140 },
               },
+              openPickerIcon: {
+        sx: {
+          color: 'primary.main', // ✅ change to any MUI color or hex value
+        },
+      },
             }}
       value={selectedDate}
       onChange={(newValue) => setSelectedDate(newValue)}
@@ -144,10 +163,9 @@ const matchesDate =
     IconComponent={ArrowDropDownIcon}
     renderValue={(selected) => (selected ? selected : "Doctor")}
     sx={{
-      minWidth: 110,
-      height: 36,
-      fontSize: '0.85rem',
-      borderRadius: 2,
+      minWidth: 120,
+       height: 38,
+    
       bgcolor: "#fff",
       color: "#222",
       '& .MuiSelect-select': {
@@ -190,7 +208,7 @@ const matchesDate =
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRows.map((row,i) => (
+            {paginatedRows.map((row,i) => (
                <TableRow key={i}>
                                <TableCell>
                                  <Link  color="primary" fontWeight={600} sx={{cursor: 'pointer'}} onClick={() => navigate(`/admin/VisitPatientId`, {
@@ -220,7 +238,7 @@ const matchesDate =
         </Table>
       </TableContainer>
 
-      <Box
+      {/* <Box
         mt={2}
         display="flex"
         justifyContent="space-between"
@@ -228,7 +246,7 @@ const matchesDate =
         fontSize={14}
         color="text.secondary"
       >
-        <span>Showing {filteredRows.length} patients</span>
+              Showing {start} to {end} of {totalCount} patients
         <Box>
           <Button
             variant="outlined"
@@ -240,6 +258,8 @@ const matchesDate =
               px: 2,
               textTransform: "none",
             }}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled = {currentPage === 1}
           >
             &lt; Prev
           </Button>
@@ -252,11 +272,19 @@ const matchesDate =
               px: 2,
               textTransform: "none",
             }}
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled = { currentPage === totalPages}
           >
             Next &gt;
           </Button>
         </Box>
-      </Box>
+      </Box> */}
+      <PaginationControls
+  currentPage={currentPage}
+  totalCount={patientRows.length}
+  rowsPerPage={rowsPerPage}
+  onPageChange={setCurrentPage}
+/>
     </Box>
   );
 }

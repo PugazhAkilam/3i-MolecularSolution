@@ -16,18 +16,21 @@ import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { formatTimeSlot } from "../../utils/formatTime";
+import { getAppointment } from "../../service/appointmentService";
 
 function AppointmentStep2() {
   const [scanResults, setScanResults] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
+   const [editMode, setEditMode] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const navigate = useNavigate();
    const location = useLocation();
-const { date, selectedTime, selectedDoctor, patient } = location.state || {};
+const { date, selectedTime, selectedDoctor, patient ,action,appointmentId} = location.state || {};
    console.log("locat",location.state);
    
     const [appointment, setAppointment] = useState({
@@ -38,6 +41,10 @@ const { date, selectedTime, selectedDoctor, patient } = location.state || {};
   });
 console.log("appaat",appointment);
 useEffect(() => {
+   if(action === 'edit'){
+    setEditMode(true);
+   }
+
     if (date && selectedTime && selectedDoctor && patient) {
       setAppointment({
         date,
@@ -48,12 +55,47 @@ useEffect(() => {
       });
     }
   }, [date, selectedTime, selectedDoctor, patient]);
+
+
+
+   useEffect(() => {
+          async function fetchAppointmentDetails() {
+            if (appointmentId) {
+             
+              try {
+                const appointment = await getAppointment(appointmentId);
+                if (appointment) {
+                  console.log("loapp",appointment);
+                   setScanResults({
+        pulse:appointment.pulse,
+        bloodPressure: appointment.bloodPressure,
+        respiratoryRate:appointment.respiratoryRate,
+        stressLevel: appointment.stressLevel,
+      });
+            
+                }
+              } catch (err) {
+                console.error('Failed to fetch appointment details', err);
+              }
+            }
+          }
+          fetchAppointmentDetails();
+        }, [appointmentId]);
+
+
+
+
  const [captureMode, setCaptureMode] = useState("now");
 console.log(selectedDoctor, date, selectedTime);
 
  const handleContinue = () => {
   console.log("Continue clicked in Capture Now mode");
-  navigate("/admin/appointment-step3", { state: { appointment, scanResults ,action:"new"} });
+  navigate("/admin/appointment-step3", { state: { 
+    appointment,
+    scanResults ,
+    action: editMode ? 'edit' : 'new',
+    appointmentId: editMode ? appointmentId : null
+    } });
 };
 
   const handleChange = (event, newMode) => {
@@ -125,11 +167,7 @@ console.log(selectedDoctor, date, selectedTime);
       setCameraOn(false);
     }, 5000);
   };
-const formattedDate = date?.toLocaleDateString("en-GB", {
- // Abbreviated month (e.g., Sep)
-  day: "2-digit",   // Two-digit day (e.g., 14)
-    month: "short", 
-});
+
 
   return (
     // <Box
@@ -146,27 +184,34 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
           backgroundColor: "white",
           p: 4,
           borderRadius: 2,
-          my: 4
+      
         }}
       >
         {/* Header */}
         <Box borderBottom={1} borderColor="grey.200" pb={3} mb={3}>
-          <Typography variant="h4" fontWeight="bold" color="text.primary">
+          {/* <Typography variant="h4" fontWeight="bold" color="text.primary">
             Appointment
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mt={1}>
-            Add an appointment{" "}
-            <Box component="span" fontWeight="600">
-              (Step 2 of 3)
-            </Box>
+          </Typography> */}
+          <Typography variant="h6" fontWeight="600" mb={1}>
+               {editMode ? 'Update' : 'Add'} an appointment{" "}
+            <Typography component="span" variant="body2" color="text.secondary">
+                         (Step 2 of 3)
+                       </Typography>
           </Typography>
           {appointment.patient ? (
           <Typography>
-            {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+            {appointment.patient.firstName}{appointment.patient.lastName} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | 
+            App: 
+            {appointment.date ? 
+              new Date(appointment.date).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
-            }) : ''} - {appointment.time.toUpperCase()}
+            })
+            
+            : ''} - {formatTimeSlot(appointment.time)}
+              
+            {/* {appointment.time.toUpperCase()} */}
           </Typography>
         ) : (
           <Typography>No patient data available</Typography>
@@ -183,19 +228,34 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
       exclusive
       onChange={handleChange}
       aria-label="capture mode"
-      sx={{ mb: 4 }}
-    >
+      size="small"
+ sx={{
+      bgcolor: '#EEEEEE', // light gray background for the group
+      borderRadius: '5px',
+      p: 0.5,
+      ".MuiToggleButton-root": {
+        border: "none",
+        borderRadius: '5px',
+        px: 2,
+        color: "text.secondary",  
+        backgroundColor: 'transparent',
+        "&:hover": {
+          backgroundColor: "#c0c0c0",
+        }
+      },
+      ".MuiToggleButton-root.Mui-selected": {
+        backgroundColor: "#ffffff", // selected button bg white
+        color: "#000000",           // selected button text color
+        fontWeight: "bold",
+      },
+      ".MuiToggleButton-root:not(:last-of-type)": {
+        marginRight: '4px', // add spacing between buttons
+      }
+    }}    >
       <ToggleButton 
   value="now"
   aria-label="capture now"
-  sx={{
-    bgcolor: captureMode === "now" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "now" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "now" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
+  
 >
   Capture Now
 </ToggleButton>
@@ -204,14 +264,7 @@ const formattedDate = date?.toLocaleDateString("en-GB", {
       <ToggleButton
         value="later"
         aria-label="capture later"
-sx={{
-    bgcolor: captureMode === "later" ? "#008cffff" : "transparent",        // Light Blue when active
-    color: captureMode === "later" ? "#1976d2" : "inherit",              // Blue text when active
-    borderColor: captureMode === "later" ? "#0d92ff" : "rgba(0,0,0,0.12)", // Blue border when active
-    "&:hover": {
-      bgcolor: "#e3f2fd", // Lighter blue on hover
-    },
-  }}
+
       >
         Capture Later
       </ToggleButton>
@@ -245,9 +298,9 @@ sx={{
                   <Typography variant="subtitle1" fontWeight="600" gutterBottom>
                     Patient Vital Info
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" mb={3}>
+                  {/* <Typography variant="caption" color="text.secondary" mb={3}>
                     (Updated on 25-Jul-2025)
-                  </Typography>
+                  </Typography> */}
                   <Stack spacing={3}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <ShowChartIcon color="primary" />
@@ -512,7 +565,13 @@ sx={{
         sx={{ textTransform: "none" }}
         onClick={handleContinue}
       >
-        {captureMode === "now" ? "Continue" : "Skip & Continue"}
+       {editMode 
+  ? 'Update & Continue' 
+  : captureMode === "now" 
+    ? 'Continue' 
+    : 'Skip & Continue'
+}
+
       </Button>
           </Box>
         </Box>

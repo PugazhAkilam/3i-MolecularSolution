@@ -19,6 +19,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "./config";
+import { setDate } from "date-fns";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // example
+
 
 // A utility function to calculate age, to keep the main component clean
 const calculateAge = (dob) => {
@@ -87,6 +90,7 @@ export default function NewPatientRegistration() {
         address1: "", address2: "", state: "", city: "",
         pincode: "", height: "", weight: ""
     });
+    const [isReload, setReload] = useState(false);
 
     /**
      * useEffect hook to fetch data on component load.
@@ -135,7 +139,7 @@ export default function NewPatientRegistration() {
         };
 
         fetchData();
-    }, [isEditMode, locationState.regId]);
+    }, [isEditMode, locationState.regId, isReload]);
 
     const handleInputChange = (field) => (e) => {
         setFormData({ ...formData, [field]: e.target.value });
@@ -187,6 +191,16 @@ export default function NewPatientRegistration() {
             console.error("Network error:", err);
             alert("An error occurred. Please try again.");
         }
+    };
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+        setFormData({
+        firstName: "", lastName: "", mobile: "", email: "",
+        address1: "", address2: "", state: "", city: "",
+        pincode: "", height: "", weight: ""
+    });
+        setDob(null)
+        setReload(true);
     };
     
     const handleDialogYes = () => {
@@ -241,39 +255,72 @@ export default function NewPatientRegistration() {
                     </Grid>
                     <Grid container spacing={2} alignItems="center" mb={3}>
                         <Grid item xs={4}>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DatePicker
-                                    label="Date Of Birth *"
-                                    value={dob}
-                                    onChange={setDob}
-                                    format="dd-MMM-yyyy"
-                                    slotProps={{ textField: { fullWidth: true, placeholder: "Select date" } }}
-                                />
-                            </LocalizationProvider>
+                           <LocalizationProvider dateAdapter={AdapterDateFns}>
+  <DatePicker
+    label="Date Of Birth *"
+    value={dob}
+    onChange={setDob}
+    format="dd-MM-yyyy"
+    slots={{
+      openPickerIcon: CalendarTodayIcon, // 👈 Replace with your custom icon
+    }}
+    slotProps={{
+      textField: {
+        fullWidth: true,
+        placeholder: "Select date",
+      },
+      openPickerIcon: {
+        sx: {
+          color: 'primary.main', // ✅ change to any MUI color or hex value
+        },
+      },
+    }}
+  />
+</LocalizationProvider>
+
                         </Grid>
                         <Grid item xs={4}>
-                            <Box sx={{ display: 'flex' }}>
-                                <Typography fontWeight={500} mt={1} mr={1}>
-                                    Sex *
-                                </Typography>
-                                <ToggleButtonGroup
-                                    value={sex}
-                                    exclusive
-                                    onChange={handleSexChange}
-                                    size="small"
-                                    sx={{
-                                        border: "1px solid #b1b7bf",
-                                        borderRadius: 1,
-                                        ".MuiToggleButton-root": { borderRadius: 0, border: "none", px: 2, color: "#616161" },
-                                        ".MuiToggleButton-root.Mui-selected": { backgroundColor: "#e9f0ff", color: "#1976d2", fontWeight: "bold" },
-                                        ".MuiToggleButton-root:not(:last-child)": { borderRight: "1px solid #b1b7bf" }
-                                    }}
-                                >
-                                    <ToggleButton value="male">Male</ToggleButton>
-                                    <ToggleButton value="female">Female</ToggleButton>
-                                    <ToggleButton value="not_answer">Not to Answer</ToggleButton>
-                                </ToggleButtonGroup>
-                            </Box>
+                           <Box sx={{ display: 'flex' }}>
+  <Typography fontWeight={500} mt={1} mr={1}>
+    Sex *
+  </Typography>
+
+  <ToggleButtonGroup
+    value={sex}
+    exclusive
+    onChange={handleSexChange}
+    size="small"
+    sx={{
+      bgcolor: '#EEEEEE', // light gray background for the group
+      borderRadius: '5px',
+      p: 0.5,
+      ".MuiToggleButton-root": {
+        border: "none",
+        borderRadius: '5px',
+        px: 2,
+        color: "text.secondary",  
+        fontWeight: 600,        // default text color
+        backgroundColor: 'transparent',
+        "&:hover": {
+          backgroundColor: "#c0c0c0",
+        }
+      },
+      ".MuiToggleButton-root.Mui-selected": {
+        backgroundColor: "#ffffff", // selected button bg white
+        color: "#000000",           // selected button text color
+        fontWeight: "bold",
+      },
+      ".MuiToggleButton-root:not(:last-of-type)": {
+        marginRight: '4px', // add spacing between buttons
+      }
+    }}
+  >
+    <ToggleButton value="male">Male</ToggleButton>
+    <ToggleButton value="female">Female</ToggleButton>
+    <ToggleButton value="not_answer">Not to Answer</ToggleButton>
+  </ToggleButtonGroup>
+</Box>
+
                         </Grid>
                     </Grid>
 
@@ -327,7 +374,7 @@ export default function NewPatientRegistration() {
                 </Paper>
                 <RegistrationDialog 
                     open={dialogOpen} 
-                    onClose={() => setDialogOpen(false)} 
+                    onClose={handleDialogClose} 
                     onYes={handleDialogYes} 
                     onNo={handleDialogNo} 
                 />

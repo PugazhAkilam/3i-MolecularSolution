@@ -216,41 +216,12 @@ console.log("userdata",userData);
           Appointment
         </Typography>
         <Box display="flex" justifyContent="flex-end" alignItems="center" mb={1} >
-          {/* <Typography variant="h6" fontWeight="bold">
-            Patients List
-          </Typography> */}
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              bgcolor: "rgb(11,58,132)",
-              borderRadius: 2,
-              px: 2,
-              textTransform: "none",
-              fontWeight: 600,
-              "&:hover": { bgcolor: "rgb(11,58,132)" },
-            }}
-            onClick={() => navigate('/admin/searchpatient')}
-          >
-            Add Appointment
-          </Button>
+         
+        
           
         </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" gap={2} mb={2}>
-  {/* <TextField
-    size="small"
-    placeholder="Search by name or mobile number"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <SearchIcon color="action" />
-        </InputAdornment>
-      ),
-    }}
-    sx={{ width: { xs: "100%", sm: 370 }, mb: 2 }}
-  /> */}
+
 
   {!showDatePicker && (
     <Button
@@ -277,6 +248,21 @@ console.log("userdata",userData);
       />
     </LocalizationProvider>
   )}
+    <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              bgcolor: "rgb(11,58,132)",
+              borderRadius: 2,
+              px: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              "&:hover": { bgcolor: "rgb(11,58,132)" },
+            }}
+            onClick={() => navigate('/admin/searchpatient')}
+          >
+            Add Appointment
+          </Button>
 </Box>
 
 
@@ -337,12 +323,9 @@ console.log("userdata",userData);
 
                 <TableCell>
   <Tooltip title="Edit">
-    <IconButton color="primary"    onClick={() => navigate('/admin/update-appointment-step1', {
+    <IconButton color="primary"    onClick={() => navigate('/admin/appointment-step1', {
     state: {
       regId: row.patientId,
-      name: row.firstName+" "+row.lastName,
-      mobile: row.mobile,
-      age: row.age,
       data: row,
       action: 'edit' // Indicate this is for editing an appointment
     }
@@ -354,8 +337,16 @@ console.log("userdata",userData);
   <Tooltip title="Scan Vital">
     <IconButton
       color="primary"
-      onClick={() => navigate('/admin/update-appointment-step2', 
-           { state: { date:row.date, selectedTime:row.times, selectedDoctor:row.doctor, patient:row, edit:'edit' } })}
+      onClick={() => navigate('/admin/appointment-step2', 
+           { state: {
+             date:row.date,
+             selectedTime:row.times, 
+             selectedDoctor:row.doctor, 
+             patient:row, 
+             appointmentId:row.appointmentId,
+             action:'edit' 
+            
+            } })}
     >
       <CameraAltIcon />
     </IconButton>
@@ -365,7 +356,7 @@ console.log("userdata",userData);
   
 
   <Tooltip title="Delete">
- <IconButton color="primary" onClick={() => handleDelete(row.patientId)}>
+ <IconButton color="primary" onClick={() => handleDelete(row.appointmentId)}>
     <RiCloseCircleFill />
   </IconButton>
 </Tooltip>

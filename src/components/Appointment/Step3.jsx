@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   Grid,
@@ -31,6 +31,8 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import VisitHistoryTable from "../visitHis/VisitHistoryTable";
 import { API_URL } from "../config";
+import { formatTimeSlot } from "../../utils/formatTime";
+import PreviousVisitTab from "../consultation/PreviousVisitTab";
 
 const visitHistory = [
   {
@@ -54,38 +56,25 @@ export default function AppointmentReviewStep3() {
   
   
   const location = useLocation();
-  const { appointment, scanResults } = location.state || {};
+  const { appointment, scanResults,action,appointmentId } = location.state || {};
   console.log("loc",location.state);
   
 
   console.log("s3",appointment);
   console.log("ss",scanResults);
   
-  
+   const [editMode, setEditMode] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  // const handleSave = async () => {
+   useEffect(() => {
+    if (action === 'edit') {
+      setEditMode(true);
+    }
+  }, [action]);
 
-  //   const newAppointment = {...appointment, ...scanResults };
-  //   console.log("nA",newAppointment);
-    
-  //   try {
-  //     const res = await fetch('http://localhost:8000/api/appointment', {
-  //       method: "POST",
-  //       headers: {
-  //       'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(newAppointment)
-  //     });
-  //     const data = res.json();
-  //     console.log("res-data", data);
-      
-  //   } catch(err) {
-  //     console.log("error",err);      
-  //   }
-  //   setOpen(true);
-  // };
 
+ const newAppointment = { ...appointment, ...scanResults};
+    console.log("newAppointment:", newAppointment);
   const handleSave = async () => {
     // Combine existing appointment data with new scan results
     const newAppointment = { ...appointment, ...scanResults };
@@ -95,11 +84,11 @@ export default function AppointmentReviewStep3() {
     let method;
 
     // Determine API endpoint and method based on whether an appointment ID exists
-    if (newAppointment.patient && newAppointment.patient.patientId) {
+    if (editMode && appointmentId) {
         // If an appointmentId exists, it's an update
-        apiUrl = `${API_URL}/appointment/editAppointment/${newAppointment.patient.patientId}`;
+        apiUrl = `${API_URL}/appointment/editAppointment/${appointmentId}`;
         method = "PUT";
-    } else if (newAppointment.patient.regId) {
+    } else if (newAppointment.patient.patientId) {
         // If it's a new registration, it's a create operation
         apiUrl = `${API_URL}/appointment/createAppointment`;
         method = "POST";
@@ -146,25 +135,25 @@ export default function AppointmentReviewStep3() {
  
   return (
     <>
-      <Card sx={{ maxWidth: "100%", mx: "auto", borderRadius: 3, mt: 4 }}>
+      <Card sx={{ maxWidth: "100%", mx: "auto", borderRadius: 2 }}>
         <CardContent sx={{ p: { xs: 1, md: 4 } }}>
           {/* Header */}
-          <Typography variant="h5" fontWeight="bold">
+          {/* <Typography variant="h5" fontWeight="bold">
             Appointment
-          </Typography>
-          <Typography fontWeight={600} mt={0.5}>
-            Add an appointment{" "}
-            <Typography component="span" variant="body2" color="text.secondary">
-              (Step 3 of 3)
-            </Typography>
-          </Typography>
+          </Typography> */}
+         <Typography variant="h6" fontWeight="600" mb={1}>
+                   {editMode ? 'Update' : 'Add'} an appointment{" "}
+                    <Typography component="span" variant="body2" color="text.secondary">
+                      (Step 3 of 3)
+                    </Typography>
+                  </Typography>
         {appointment.patient ? (
                   <Typography>
-                    {appointment.patient.name} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
+                    {appointment.patient.firstName}{appointment.patient.lastName} | Mob: {appointment.patient.mobile} | Age: {appointment.patient.age} | Doc: {appointment.doctor} | App: {appointment.date ? new Date(appointment.date).toLocaleDateString('en-GB', {
                       day: '2-digit',
                       month: 'short',
                       year: 'numeric',
-                    }) : ''} - {appointment.time.toUpperCase()}
+                    }) : ''} - {formatTimeSlot(appointment.time)}
                   </Typography>
                 ) : (
                   <Typography>No patient data available</Typography>
@@ -180,7 +169,7 @@ export default function AppointmentReviewStep3() {
               {appointment.patient?(
 <>
     <Typography>
-                <b>Name:</b> {appointment.patient.name}
+                <b>Name:</b> {appointment.patient.firstName}{appointment.patient.lastName}
               </Typography>
               <Typography>
                 <b>Age:</b> {appointment.patient.age}
@@ -217,7 +206,7 @@ export default function AppointmentReviewStep3() {
             }) : ''}
               </Typography>
               <Typography>
-                <b>Time:</b>  {appointment.time.toUpperCase()}
+                <b>Time:</b> {formatTimeSlot(appointment.time)}
               </Typography>
                 
                 </>):(<></>)
@@ -230,9 +219,7 @@ export default function AppointmentReviewStep3() {
           {/* Patient Vital Info */}
           <Typography fontWeight="600" mb={2}>
             Patient Vital Info{" "}
-            <Typography component="span" fontSize={13} color="text.secondary">
-              (updated on 28-Jul-2025)
-            </Typography>
+           
           </Typography>
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={6} sm={3}>
@@ -242,7 +229,7 @@ export default function AppointmentReviewStep3() {
               <Typography variant="h6" color="primary.main" fontWeight={700}>
                 {scanResults?scanResults.bloodPressure:""}{" "}
                 <Typography variant="caption" color="text.secondary">
-                  mmHg
+                {scanResults? "mmHg":""}  
                 </Typography>
               </Typography>
             </Grid>
@@ -254,7 +241,7 @@ export default function AppointmentReviewStep3() {
                 {scanResults?scanResults.
 pulse:""}{" "}
                 <Typography variant="caption" color="text.secondary">
-                  BPM
+                      {scanResults? "BPM":""}  
                 </Typography>
               </Typography>
             </Grid>
@@ -265,7 +252,7 @@ pulse:""}{" "}
               <Typography variant="h6" sx={{ color: "#2466d2" }} fontWeight={700}>
                 {scanResults?scanResults.respiratoryRate:""}{" "}
                 <Typography variant="caption" color="text.secondary">
-                  Per min
+                    {scanResults? "Per min":""}  
                 </Typography>
               </Typography>
             </Grid>
@@ -285,13 +272,19 @@ pulse:""}{" "}
           <Divider sx={{ mb: 2 }} />
 
           {/* Visit History Table */}
-          <Typography fontWeight="600" mb={1}>
+          {
+            editMode?(<>
+               <Typography fontWeight="600" mb={1}>
             Visit History
           </Typography>
-             <VisitHistoryTable regId={appointment.patient.regId} />
-
-          {/* Action Buttons */}
+          <PreviousVisitTab patientData={appointment.patient} />
+            </>
+            ):(
+              <></>
+            )
+          }
         
+            
              <Box
                       mt={4}
                       display="flex"
@@ -308,19 +301,12 @@ pulse:""}{" "}
               variant="contained"
               onClick={handleSave}
             >
-            Save &amp; Continue
+         {editMode ? 'Update & Continue' : 'Continue'}
             </Button>
             
                       </Box>
                     </Box>
-            {/* <Grid item>
-            <Button variant="outlined" onClick={()=>navigate('/admin/appointment')}>Cancel</Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" onClick={handleSave}>
-                Save &amp; Continue
-              </Button>
-            </Grid> */}
+            
          
         </CardContent>
       </Card>
