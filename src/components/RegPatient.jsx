@@ -113,7 +113,12 @@ export default function RegisteredPatients() {
         <Typography variant="subtitle1" gutterBottom>
           Patients List
         </Typography>
-        <Box display="flex" alignItems="center" gap={2} mb={2}>
+        <Box  display="flex"
+        flexWrap="wrap"
+        alignItems="center"
+        gap={2}
+        justifyContent="space-between"
+        mb={1.5}>
           <TextField
             size="small"
             placeholder="Search by name or mobile number"
@@ -127,8 +132,8 @@ export default function RegisteredPatients() {
                 </InputAdornment>
               ),
             }}
-          />
-          <DatePicker
+          />  <Box display="flex" gap={2} alignItems="center"> 
+           <DatePicker
             label="Date"
             value={dateFilter}
             onChange={newValue => setDateFilter(newValue)}
@@ -154,6 +159,8 @@ export default function RegisteredPatients() {
             <MenuItem value='Dr.Ram'>Dr.Ram</MenuItem>
             <MenuItem value='Dr.Kumar'>Dr.Kumar</MenuItem>
           </TextField>
+          </Box>
+         
         </Box>
         <TableContainer component={Paper}>
           <Table>

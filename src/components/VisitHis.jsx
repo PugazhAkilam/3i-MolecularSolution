@@ -82,7 +82,7 @@ const matchesDate =
       <Typography variant="h5" fontWeight="bold" mb={1}>
         Visitor History
       </Typography>
-      <Typography variant="h6" fontWeight="bold" mb={2}>
+     <Typography variant="subtitle1" gutterBottom>
         Patients List
       </Typography>
       <Box
@@ -111,6 +111,7 @@ const matchesDate =
         <Box display="flex" gap={2} alignItems="center">
   <LocalizationProvider dateAdapter={AdapterDateFns}>
     <DatePicker
+     label="Date"
       slotProps={{
               textField: {
                 size: 'small',

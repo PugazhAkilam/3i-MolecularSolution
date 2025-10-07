@@ -44,10 +44,7 @@ const PreviousVisitTab = ({patientData}) => {
                 }
                 const data = await response.json();
                 
-                // setChiefComplaint(data.ChiefComplaint || '');
-                // setSummaryNote(data.SummaryNote || '');
-                // setPreExistingProblems(data.PreExisting || []);
-                // setAllergy(data.Allergy || '');
+               
                 setPrescriptions(data.prescriptions || []);
 
             } catch (err) {
@@ -99,16 +96,7 @@ const PreviousVisitTab = ({patientData}) => {
                             <TableCell>regular checkup</TableCell>
                          
                         </TableRow>
-         {/* {prescriptions.map((med, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{med.name} name</TableCell>
-                            <TableCell>{med.dosage} dosage</TableCell>
-                            <TableCell>{med.duration}23</TableCell>
-                            <TableCell>{med.frequency}22</TableCell>
-                            <TableCell>{med.notes}regular checkup</TableCell>
-                         
-                        </TableRow>
-                    ))} */}
+      
         </TableBody>
       </Table>
 
@@ -171,16 +159,7 @@ const PreviousVisitTab = ({patientData}) => {
                             <TableCell>regular checkup</TableCell>
                          
                         </TableRow>
-         {/* {prescriptions.map((med, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{med.name}</TableCell>
-                            <TableCell>{med.dosage}</TableCell>
-                            <TableCell>{med.duration}</TableCell>
-                            <TableCell>{med.frequency}</TableCell>
-                            <TableCell>{med.notes}</TableCell>
-                         
-                        </TableRow>
-                    ))} */}
+        
         </TableBody>
       </Table>
 

@@ -22,6 +22,7 @@ import { RiCloseCircleFill } from "react-icons/ri";
 import { useLocation, useNavigate } from 'react-router-dom';
 import VisitHistoryTable from './visitHis/VisitHistoryTable';
 import { API_URL } from "./config";
+import PreviousVisitTab from './consultation/PreviousVisitTab';
 
 
 export default function VisitorHistoryId() {
@@ -147,61 +148,13 @@ console.log("appointment",appointment);
   year: 'numeric',
 }) : null})</span>
         </Typography>
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 1 }}>
-
-           
-          
-          <Grid item xs={6} sm={3}>
-           
-              <Stack alignItems="center">
-              <Typography fontWeight={600} variant="body1" color="primary">
-                {appointment.bloodPressure}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Blood Pressure
-              </Typography>
-            </Stack>
-            </Grid>
-          <Grid item xs={6} sm={3}>
-            <Stack alignItems="center">
-              <Typography fontWeight={600} variant="body1" color="primary">
-                {appointment.pulse}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Pulse (BPM)
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Stack alignItems="center">
-              <Typography fontWeight={600} variant="body1" color="primary">
-                {appointment.respiratoryRate}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Respiratory rate (Per min)
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Stack alignItems="center">
-              <Typography fontWeight={600} variant="body1" color="primary">
-                {appointment.stressLevel}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Stress Level
-              </Typography>
-            </Stack>
-          </Grid>
-           
-          
-        </Grid>
+       
 
            {/* Visit History Table */}
       <Typography variant="h6" fontWeight={500} mb={2}>
         Visit History
       </Typography>
-
-      <VisitHistoryTable regId={patientData.regId} />
+ <PreviousVisitTab patientData={patientData} />
       {/* <TableContainer component={Paper} elevation={0} sx={{ mb: 3 }}>
         <Table>
           <TableHead>
