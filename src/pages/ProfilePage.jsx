@@ -12,13 +12,36 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useAuth } from '../context/AuthContext';
+import { useEffect } from 'react';
+import { API_URL } from '../components/config';
+import { useState } from 'react';
+
 
 const ProfilePage = () => { 
   const { user,loading } = useAuth();
-  
+  const [ userData, setUserData ] = useState([]);
+ 
+    useEffect(() => {
+      const getProfileData = async () => {
+        const storedUser = JSON.parse(localStorage.getItem('userData'));
+        const storedUserId = storedUser.data.id;
+        
+        const res = await fetch(`${API_URL}/patient/profileDetail/${storedUserId}`);  
+        const data = await res.json();
+        console.log("profiledata",data.data[0]);    
+        if (res.ok) {
+          setUserData(data.data[0] || {});
+        } else {
+          console.error("Failed to fetch profile data");
+        }     
+      }
+      getProfileData();
+    }, [])
+
   if (loading) {
     return <div>Loading...</div>;
   }
+   
   return (
     <Box p={3} sx={{ minHeight: '100vh' }}>
       {/* Profile Header */}
@@ -52,10 +75,10 @@ const ProfilePage = () => {
     </Grid>
     <Grid item xs={12} sm={8}>
   <Typography variant="h5" textAlign="center">
-    {user.name}
+    {userData.name}
   </Typography>
   <Typography color="text.secondary" textAlign="center">
-    {user.userType === 2 ? "Admin" : "Employee"}
+    {userData.userType === 2 ? "Admin" : "Employee"}
   </Typography>
   <Typography color="text.secondary" textAlign="center">
     Chennai
@@ -89,7 +112,7 @@ const ProfilePage = () => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <Typography variant="body2" color="text.secondary">Email Address</Typography>
-              <Typography>{user && user.email}</Typography>
+              <Typography>{userData && userData.email}</Typography>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Typography variant="body2" color="text.secondary">Phone Number</Typography>
@@ -97,7 +120,7 @@ const ProfilePage = () => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <Typography variant="body2" color="text.secondary">User Role</Typography>
-              <Typography>{user.userType===2?"admin":"Employee"}</Typography>
+              <Typography>{userData.userType===2?"admin":"Employee"}</Typography>
             </Grid>
           </Grid>
         </CardContent>
