@@ -26,6 +26,7 @@ import AppointmentStep3 from '../components/Appointment/Step3';
 import SearchPatient from '../components/SearchPatient';
 import VisitorHistoryId from '../components/VisitPatientId';
 import ConsultationPage from '../pages/ConsultationPage';
+import ProfilePage from '../pages/ProfilePage';
 
 
 const AppRoutes = () => {
@@ -67,7 +68,7 @@ const AppRoutes = () => {
              <Route path="appointment-step1" element={<AppointmentStep1 />} />
                 <Route path="appointment-step2" element={<AppointmentStep2 />} />
                    <Route path="appointment-step3" element={<AppointmentStep3 />} />
-                   
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="newpatient" element={<NewPatient />} />
           <Route path="regpatient" element={<RegPatient />} />
           <Route path="visitorhistory" element={<VisitHis />} />
