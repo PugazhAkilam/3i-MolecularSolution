@@ -4,15 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import { Box } from '@mui/material';
 import { PacmanLoader, PulseLoader } from 'react-spinners';
 
+
 const override = {
   display: "block",
   margin: "0 auto",
   borderColor: "rgb(10, 77, 201)",
 };
-
 const ProtectedRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
-
+  const { user, loading, isAuthenticated } = useAuth();
+   console.log("user in protected route", user);
+   
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -29,8 +30,12 @@ const ProtectedRoute = () => {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/401" />;
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.userType !== 2) {
+    return <Navigate to="/401" replace />;
   }
 
   return <Outlet />;

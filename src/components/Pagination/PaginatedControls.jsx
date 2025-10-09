@@ -22,10 +22,7 @@ const PaginationControls = ({
     }
   };
 
-//   const paginatedRows = filteredRows.slice(
-//   (currentPage - 1) * rowsPerPage,
-//   currentPage * rowsPerPage
-// );
+
 
   const start = (currentPage - 1) * rowsPerPage + 1;
   const end = Math.min(currentPage * rowsPerPage, totalCount);

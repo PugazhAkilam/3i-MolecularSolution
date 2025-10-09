@@ -15,28 +15,33 @@ import { useAuth } from '../context/AuthContext';
 import { useEffect } from 'react';
 import { API_URL } from '../components/config';
 import { useState } from 'react';
+import userService from '../service/user';
 
 
 const ProfilePage = () => { 
   const { user,loading } = useAuth();
   const [ userData, setUserData ] = useState([]);
  
-    useEffect(() => {
-      const getProfileData = async () => {
-        const storedUser = JSON.parse(localStorage.getItem('userData'));
-        const storedUserId = storedUser.data.id;
-        
-        const res = await fetch(`${API_URL}/patient/profileDetail/${storedUserId}`);  
-        const data = await res.json();
-        console.log("profiledata",data.data[0]);    
-        if (res.ok) {
-          setUserData(data.data[0] || {});
-        } else {
-          console.error("Failed to fetch profile data");
-        }     
+   useEffect(() => {
+  const getProfileData = async () => {
+    try {
+      const res = await userService.getme();
+
+      const data =res.data;
+      console.log("profiledata", data.data[0]);    
+      
+      if (res.ok) {
+        setUserData(data.data[0] || {});
+      } else {
+        console.error("Failed to fetch profile data");
       }
-      getProfileData();
-    }, [])
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
+
+  getProfileData();
+}, []);
 
   if (loading) {
     return <div>Loading...</div>;

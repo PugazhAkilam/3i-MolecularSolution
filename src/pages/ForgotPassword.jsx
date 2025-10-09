@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   Box,
   Paper,
@@ -12,6 +12,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { API_URL } from "../components/config";
+import userService from "../service/user";
 function ForgotPasswordAndReset() {
   const [page, setPage] = useState("email");
   const [email, setEmail] = useState("");
@@ -38,12 +39,8 @@ function ForgotPasswordAndReset() {
   const handleSendRequest = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/user/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (response.ok) {
+      const response = await userService.forgotPassword(email);
+      if (response.success) {
         setLinkSent(true);
       } else {
         const errorData = await response.json();
@@ -67,12 +64,8 @@ function ForgotPasswordAndReset() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/user/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
-      });
-      if (response.ok) {
+      const response = await userService.resetPassword(token, newPassword);
+      if (response.success) {
         alert("Password reset successful!");
         navigate("/login");
       } else {

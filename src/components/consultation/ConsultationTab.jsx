@@ -22,12 +22,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 // import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { RiCloseCircleFill } from "react-icons/ri";
-import { API_URL} from '../config';
 import { LuActivity } from "react-icons/lu";
 import { FaHeartbeat } from "react-icons/fa";
 import { FaLungs } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import CloseIcon from '@mui/icons-material/Close';
+import { getMedicalHistory, saveConsultation } from '../../service/patientService';
 
 const VitalInfoBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -87,17 +87,20 @@ const ConsultationTab = ({ patientData }) => {
                 return;
             }
             try {
-                const response = await fetch(`${API_URL}/patient/getMedhistory/${patientData.patientId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch medical history');
-                }
-                const data = await response.json();
-                
+              const result = await getMedicalHistory(patientData.patientId);
+                // if (!response.ok) {
+                //     throw new Error('Failed to fetch medical history');
+                // }
+                  if (result.success) {
+                const data = result.data;
                 setChiefComplaint(data.ChiefComplaint || '');
                 setSummaryNote(data.SummaryNote || '');
                 setPreExistingProblems(data.PreExisting || []);
                 setAllergy(data.Allergy || '');
                 setPrescriptions(data.prescriptions || []);
+            } else {
+                throw new Error(result.error);
+            }
 
             } catch (err) {
                 console.error('Error fetching medical history:', err);
@@ -141,18 +144,17 @@ const ConsultationTab = ({ patientData }) => {
                 return;
             }
             try {
-                const response = await fetch(`${API_URL}/patient/getMedhistory/${patientData.patientId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch medical history');
-                }
-                const data = await response.json();
-                
-                setChiefComplaint(data.ChiefComplaint || '');
-                setSummaryNote(data.SummaryNote || '');
-                setPreExistingProblems(data.PreExisting || []);
-                setAllergy(data.Allergy || '');
-                setPrescriptions(data.prescriptions || []);
-
+                 const result = await getMedicalHistory(patientData.patientId);
+                 if (result.success) {
+            const data = result.data;
+            setChiefComplaint(data.ChiefComplaint || '');
+            setSummaryNote(data.SummaryNote || '');
+            setPreExistingProblems(data.PreExisting || []);
+            setAllergy(data.Allergy || '');
+            setPrescriptions(data.prescriptions || []);
+        } else {
+            throw new Error(result.error || 'Failed to fetch medical history');
+        }
             } catch (err) {
                 console.error('Error fetching medical history:', err);
                 setError(err.message);
@@ -178,24 +180,14 @@ const ConsultationTab = ({ patientData }) => {
         }
 
         try {
-            const response = await fetch(`${API_URL}/patient/saveConsultation`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
+              const result = await saveConsultation(payload);
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log(result.message);
+           if (result.success) {
                 alert(result.message);
-                handleReset(); // Reset form after successful save
-                await fetchMedicalHistory(); 
+                handleReset();
+                await fetchMedicalHistory();
             } else {
-                const errorData = await response.json();
-                console.error('Failed to save data:', errorData.message);
-                alert(`Error: ${errorData.message}`);
+                throw new Error(result.error);
             }
         } catch (error) {
             console.error('Network error:', error);

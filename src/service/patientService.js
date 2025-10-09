@@ -20,36 +20,37 @@ export const getPatientDetails = async (regId) => {
   return res.data;
 };
 
-// export const getPatientsStats = async () => {
-//   try {
-//     const res = await api.get('/patient/dashboard/patients-stats');
-//     return res.data;
-//   }
+export const getMedicalHistory= async (patientId) => {
+    try {
+      const res = await api.get(`/patient/getMedhistory/${patientId}`);
+      return {
+        success: true,
+        data: res.data
+      };
+    } catch (error) {
+      console.error("Error fetching medical history:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch medical history'
+      };
+    }
+  };
 
-//   catch (err) {
-//     console.error("Failed to fetch patients-stats",err);
-//     throw err;
-//   }
-// };
+ export const  saveConsultation = async (consultationData) => {
+    try {
+      const res = await api.post('/patient/saveConsultation', consultationData);
+      return {
+        success: true,
+        data: res.data,
+        message: res.data.message
+      };
+    } catch (error) {
+      console.error("Error saving consultation:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to save consultation'
+      };
+    }
+  };
 
-// export const insertPatientLogin = async () => {
-//   try {
-//     const response = await api.post('/patient/login');
-//     return response;
-//   } catch (err) {
-//     console.error("Failed to delete appointment", err);
-//     throw err;
-//   }
-// };
-
-// export const getMedicalHistoryById = async (patientId) => {
-//   try {
-//     const res = await api.get(`/patient/getMedhistory/${patientId}`);
-//     return res;
-//   }
-
-//   catch (err) {
-//     console.error("Error in fetching medical history data", err);
-//     throw err;
-//   }
-// };
+  

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 
-import AuthPage from '../pages/AuthPage';
+
 import AdminLayout from '../pages/LayOut';
 import WelcomeDashboard from '../pages/WelcomeDashboard';
 
@@ -27,44 +27,54 @@ import SearchPatient from '../components/SearchPatient';
 import VisitorHistoryId from '../components/VisitPatientId';
 import ConsultationPage from '../pages/ConsultationPage';
 import ProfilePage from '../pages/ProfilePage';
-
+import { useAuth } from '../context/AuthContext';
+import { Box } from '@mui/material';
+import { PacmanLoader, PulseLoader } from 'react-spinners';
 
 const AppRoutes = () => {
-   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
 
-  // Use useEffect to check localStorage on component mount
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('userData');
-    if (loggedIn) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+const { isAuthenticated, loading } = useAuth();
 
-
+ if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <PacmanLoader color="rgb(10, 77, 201)" />
+      </Box>
+    );
+  }
   return (
     <Routes>
       {/* Public Routes */}
     <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              // If authenticated, navigate to the dashboard
-              <Navigate to="/admin" replace />
-            ) : (
-              // If not, show the login page
-              <LoginPage setIsAuthenticated={setIsAuthenticated} />
-            )
-          }
-        />
+        path="/"
+        element={
+          isAuthenticated ? (
+            <Navigate to="/admin" replace />
+          ) : (
+            <LoginPage />
+          )
+        }
+      />
+      <Route 
+        path="/login" 
+        element={
+          isAuthenticated ? (
+            <Navigate to="/admin" replace />
+          ) : (
+            <LoginPage />
+          )
+        } 
+      />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
       <Route path="/401" element={<Unauthorized />} />
   
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
-        {/* <Route element={<ProtectedRoute />}> */}
+       <Route element={<ProtectedRoute />}>
           <Route index element={<WelcomeDashboard />} />
-          <Route path="appointment" element={<Appointment />} />
+          <Route path="appointment" element={<Appointment />} /> 
              <Route path="appointment-step1" element={<AppointmentStep1 />} />
                 <Route path="appointment-step2" element={<AppointmentStep2 />} />
                    <Route path="appointment-step3" element={<AppointmentStep3 />} />
@@ -77,7 +87,7 @@ const AppRoutes = () => {
           <Route path='searchpatient' element={<SearchPatient />}/>
         <Route path='VisitPatientId' element={<VisitorHistoryId/>}/>
         <Route path='consultation' element={<ConsultationPage/>}/>
-      
+        </Route>
       </Route>
 
     
