@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { API_URL } from '../config';
 import { formatDate } from '../../utils/formatDate';
+import { getMedicalHistory } from '../../service/patientService';
 
 const PreviousVisitTab = ({patientData}) => {
   // const visitData = {
@@ -41,19 +42,18 @@ const PreviousVisitTab = ({patientData}) => {
                 setLoading(false);
                 return;
             }
-            try {
-              const id=patientData.patientId || patientData.regId
-                const response = await fetch(`${API_URL}/appointment/visitDetails2/${id}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch medical history');
-                }
-                const data = await response.json();
-                
-                // setChiefComplaint(data.ChiefComplaint || '');
-                // setSummaryNote(data.SummaryNote || '');
-                // setPreExistingProblems(data.PreExisting || []);
-                // setAllergy(data.Allergy || '');
-                setPrescriptions(data.data || []);
+             try {
+                          const result = await getMedicalHistory(patientData.patientId);
+                            // if (!response.ok) {
+                            //     throw new Error('Failed to fetch medical history');
+                            // }
+                              if (result.success) {
+                            const data = result.data;
+                         
+                            setPrescriptions(data.prescriptions || []);
+                        } else {
+                            throw new Error(result.error);
+                        }
 
             } catch (err) {
                 console.error('Error fetching medical history:', err);

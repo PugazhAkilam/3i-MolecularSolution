@@ -92,7 +92,7 @@ const Consultant = () => {
         <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
           <Box sx={{padding: '10px'}}>
   <Typography variant="h6" component="h1" sx={{padding: '8px 5px', fontWeight: 'bold'}}  gutterBottom>
-    Consultation for Rakshita
+    Consultation for {patientData.firstName} {patientData.lastName  }
   </Typography>
    <Divider sx={{marginBottom: '10px'}}/>
     {/* <Tabs value={value} onChange={handleChange} sx={{ padding: '0 20px'}} aria-label="consultation tabs">
@@ -122,12 +122,12 @@ const Consultant = () => {
           {...a11yProps(0)}
           sx={{
             textTransform: 'none', // Prevent uppercase letters
-            fontWeight: 600,
-            fontSize: '1rem',
+            // fontWeight: 600,
+            // fontSize: '1rem',
             color: 'text.secondary',
             '&.Mui-selected': {
-              backgroundColor: '#d6e4f9', // Light blue background for active tab
-              color: '#0d47a1', // Dark blue text for active tab
+              backgroundColor: '#B5C9EA', // Light blue background for active tab
+              color: 'black', // Dark blue text for active tab
              borderTopLeftRadius: "14px" ,
              borderTopRightRadius: "14px",
               borderBottom: '4px solid #0d47a1', // Dark blue bottom border
@@ -137,17 +137,17 @@ const Consultant = () => {
         <Tab
           label="Medical History"
           {...a11yProps(1)}
-          sx={{
-            textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '1rem',
+         sx={{
+            textTransform: 'none', // Prevent uppercase letters
+            // fontWeight: 600,
+            // fontSize: '1rem',
             color: 'text.secondary',
             '&.Mui-selected': {
-              backgroundColor: '#d6e4f9',
-              color: '#0d47a1',
+              backgroundColor: '#B5C9EA', // Light blue background for active tab
+              color: 'black', // Dark blue text for active tab
              borderTopLeftRadius: "14px" ,
              borderTopRightRadius: "14px",
-              borderBottom: '4px solid #0d47a1',
+              borderBottom: '4px solid #0d47a1', // Dark blue bottom border
             },
           }}
         />
@@ -155,16 +155,16 @@ const Consultant = () => {
           label="Previous Visit"
           {...a11yProps(2)}
           sx={{
-            textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '1rem',
+            textTransform: 'none', // Prevent uppercase letters
+            // fontWeight: 600,
+            // fontSize: '1rem',
             color: 'text.secondary',
             '&.Mui-selected': {
-              backgroundColor: '#d6e4f9',
-              color: '#0d47a1',
-       borderTopLeftRadius: "14px" ,
+              backgroundColor: '#B5C9EA', // Light blue background for active tab
+              color: 'black', // Dark blue text for active tab
+             borderTopLeftRadius: "14px" ,
              borderTopRightRadius: "14px",
-              borderBottom: '4px solid #0d47a1',
+              borderBottom: '4px solid #0d47a1', // Dark blue bottom border
             },
           }}
         />

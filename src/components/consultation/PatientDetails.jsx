@@ -65,10 +65,20 @@ const PatientDetails = ({ patientData, appointmentData }) => {
         <Typography variant="body2" sx={labelStyle}>Email:</Typography>
         <Typography variant="body2" sx={valueStyle}>{patientData.email}</Typography>
       </Box>
-      <Box sx={{ ...rowStyle }}>
-        <Typography variant="body2" sx={labelStyle}>Address:</Typography>
-        <Typography variant="body2" sx={valueStyle}>{patientData.addressLine1}</Typography>
-      </Box>
+    <Box  sx={{ display: "flex", alignItems: "flex-start", gap: 1 }} >
+  <Typography variant="body2" sx={labelStyle}>
+    Address:
+  </Typography>
+  <Typography variant="body2" sx={valueStyle}>
+    {patientData.addressLine1?.split(",").map((part, index) => (
+      <React.Fragment key={index}>
+        {part.trim()}
+        {index < patientData.addressLine1.split(",").length - 1 && <br />}
+      </React.Fragment>
+    ))}
+  </Typography>
+</Box>
+
       </Box>
 
 

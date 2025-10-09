@@ -8,10 +8,13 @@ import { useState } from 'react';
 import  logo from '../../assets/logo2.png';
 import Swal from 'sweetalert2';
 import { API_URL } from '../config';
-
+import { useAuth } from '../../context/AuthContext';  // Add this import
+import userService from '../../service/user';
 
 const SideDrawer = ({ isDarkMode, isMobile, setMobileOpen,user,loading }) => {
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();  // Add this line
+
   const location = useLocation();
   const menuItems = getMenuItems(user,loading);
   const [openSubMenu, setOpenSubMenu] = useState('');
@@ -25,33 +28,35 @@ const SideDrawer = ({ isDarkMode, isMobile, setMobileOpen,user,loading }) => {
     }
   };
 
-  const handleLogout = async () => {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You will be logged out of your account!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, logout!'
-      });
-  
-      if (result.isConfirmed) {
-        // try {
-        //   await fetch(`${API_URL}/auth/logout`, {
-        //     method: 'POST',
-        //     credentials: 'include'
-        //   });
-        //   Swal.fire('Logged Out!', 'You have been successfully logged out.', 'success');
-        //   navigate('/login');
-        // } catch (err) {
-        //   console.error('Logout error:', err);
-        //   Swal.fire('Error!', 'Failed to logout. Please try again.', 'error');
-        // }       
-         localStorage.removeItem("userData");
-         navigate('/login');
+ const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await userService.logout();
+        console.log("Logout service response:", res);
+        
+        if (res.success) {
+          await checkAuth(); // Check auth state after successful logout
+          Swal.fire('Logged Out!', 'You have been successfully logged out.', 'success');
+          navigate('/login', { replace: true });
+        } else {
+          throw new Error('Logout failed');
+        }
+      } catch (err) {
+        console.error('Logout error:', err);
+        Swal.fire('Error!', 'Failed to logout. Please try again.', 'error');
       }
-    };
+    }
+  };
   return (
     <Box sx={{       backgroundColor:"#F8F9FE",backdropFilter: 'blur(10px)'}} >
      

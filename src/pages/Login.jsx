@@ -15,11 +15,14 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom';
+
 import { API_URL } from '../components/config';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 function Login() {
   const navigate=useNavigate()
-  
+    const { login } = useAuth(); 
   const [showPassword, setShowPassword] = React.useState(false);
   const theme = useTheme();
   const [ userData, setUserData] = useState( {
@@ -32,36 +35,24 @@ const handleChange = (e) => {
   setUserData((prev) => ({...prev, [name]: value}));
 }
 
+// const handleChange = (e) => {
+//   const { name, value } = e.target;
+//   setUserData((prev) => ({...prev, [name]: value}));
+// }
 const handleSubmit = async () => {
- // console.log("userData::", userData)
-  
-  try{
-      const res = await fetch(`${API_URL}/patient/login`, {
-      method: "POST",
-      headers: {
-              "Content-Type": 'application/json',
-      },
-      body: JSON.stringify(userData)   
-    });
-
-    const data = await res.json();
-    console.log("data", data);
-    
-
-    if(!res.ok){
-      alert(data.message || "Something went wrong");
-      return;
+    try {
+      const result = await login(userData);
+      
+      if (result.success) {
+        navigate('/admin', { replace: true });
+      } else {
+        alert(result.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Error occurred. Please try again');
     }
-
-    localStorage.setItem('userData', JSON.stringify(data));
-    navigate('/admin');
-
-    } catch(err) {
-      console.log("Error", err);
-      alert("Error occurred. Please try again")
-    }
-};
- 
+  };
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -76,6 +67,7 @@ const handleSubmit = async () => {
         justifyContent: 'center',
         alignItems: 'center',
         p: 2,
+          p: 1,
       }}
     >
       <Box
