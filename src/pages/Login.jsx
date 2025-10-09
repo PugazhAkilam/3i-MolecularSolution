@@ -35,6 +35,10 @@ const handleChange = (e) => {
   setUserData((prev) => ({...prev, [name]: value}));
 }
 
+// const handleChange = (e) => {
+//   const { name, value } = e.target;
+//   setUserData((prev) => ({...prev, [name]: value}));
+// }
 const handleSubmit = async () => {
     try {
       const result = await login(userData);
@@ -63,6 +67,7 @@ const handleSubmit = async () => {
         justifyContent: 'center',
         alignItems: 'center',
         p: 2,
+          p: 1,
       }}
     >
       <Box
